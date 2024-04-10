@@ -20,7 +20,7 @@ function addTire(tank, posX, posY, posZ) {
 }
 
 // Complete function to create a tank
-function createTank(bodyColor, cannonColor, position) {
+function createTank(bodyColor, position) {
   const tankMaterial = new THREE.MeshPhongMaterial({ color: bodyColor });
   const tank = new THREE.Group();
 
@@ -50,7 +50,7 @@ function createTank(bodyColor, cannonColor, position) {
 
   // Cannon creation
   const cannonGeometry = new THREE.CylinderGeometry(0.25, 0.25, 2);
-  const cannonMaterial = new THREE.MeshBasicMaterial({ color: cannonColor });
+  const cannonMaterial = new THREE.MeshBasicMaterial({ color: 0x505050 });
   const cannon = new THREE.Mesh(cannonGeometry, cannonMaterial);
   cannon.position.set(1.5, 3, 0.0);
   cannon.rotateZ(Math.PI / 2); // Rotation to align the cannon
@@ -72,4 +72,4 @@ function createTank(bodyColor, cannonColor, position) {
   return tank;
 }
 
-export default createTank;
+export { createTank };

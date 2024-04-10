@@ -11,7 +11,7 @@ import {
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
 
-import createTank from "./components/createTank.js";
+import { createTank } from "./components/createTank.js";
 import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardTanks.js";
 
 let scene, renderer, camera, material, light, orbit; // Initial variables
@@ -38,12 +38,12 @@ scene.add(axesHelper);
 */
 
 // Create the ground plane
-let plane = createGroundPlaneXZ(60, 60);
+let plane = createGroundPlaneXZ(85, 60);
 scene.add(plane);
 
 // Create the tanks and add to the scene
-const tank1 = createTank(0xff0000, 0x505050, new THREE.Vector3(-0, 0, 0));
-const tank2 = createTank(0x00ff00, 0x505050, new THREE.Vector3(25, 0, 0));
+const tank1 = createTank(0xff0000, new THREE.Vector3(-0, 0, 0));
+const tank2 = createTank(0x00ff00, new THREE.Vector3(25, 0, 0));
 
 scene.add(tank1);
 scene.add(tank2);
