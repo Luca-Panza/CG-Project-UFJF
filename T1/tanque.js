@@ -43,7 +43,7 @@ scene.add(plane);
 // Function to create the level based on the current level matrix
 function createLevel(levelData) {
   const wallGeometry = new THREE.BoxGeometry(5, 5, 5);
-  const wallMaterial = new THREE.MeshBasicMaterial({ color: "green" });
+  const wallMaterial = new THREE.MeshBasicMaterial({ color: 'grey' });
 
   const blockSize = 5;
   // Calculate the offset to center the level on the plane
@@ -70,7 +70,7 @@ createLevel(levels[currentLevelIndex]);
 
 // Create the tanks and add them to the scene
 const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
-const tank2 = createTank(0x00ff00, new THREE.Vector3(20, 0, 15));
+const tank2 = createTank(0x0000ff, new THREE.Vector3(20, 0, 15));
 
 scene.add(tank1);
 scene.add(tank2);
