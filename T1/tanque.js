@@ -13,26 +13,10 @@ import {
 
 import { createTank } from "./components/createTank.js";
 import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardTanks.js";
+import { levels } from "./constants/constants.js";
 
 let scene, renderer, camera, material, light, orbit; // Initial variables
 let currentLevelIndex = 0; // Index of the current level
-const levels = [ // Arrays of levels
-  [ // Level 1
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-  ],
-
-];
 
 scene = new THREE.Scene(); // Create the main scene
 renderer = initRenderer(); // Initialize a basic renderer
@@ -63,8 +47,8 @@ function createLevel(levelData) {
 
   const blockSize = 5;
   // Calculate the offset to center the level on the plane
-  const offsetX = - ((planeWidth/2) - (blockSize/2));
-  const offsetZ = ((planeHeight/2) - (blockSize/2));
+  const offsetX = -(planeWidth / 2 - blockSize / 2);
+  const offsetZ = planeHeight / 2 - blockSize / 2;
 
   for (let i = 0; i < levelData.length; i++) {
     for (let j = 0; j < levelData[i].length; j++) {
@@ -86,7 +70,7 @@ createLevel(levels[currentLevelIndex]);
 
 // Create the tanks and add them to the scene
 const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
-const tank2 = createTank(0x00ff00, new THREE.Vector3(20, 0, 15))
+const tank2 = createTank(0x00ff00, new THREE.Vector3(20, 0, 15));
 
 scene.add(tank1);
 scene.add(tank2);
