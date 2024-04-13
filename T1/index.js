@@ -25,7 +25,7 @@ camera = initCamera(new THREE.Vector3(0, 15, 30)); // Initialize the camera at t
 material = setDefaultMaterial(); // Create a default material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 orbit = new OrbitControls(camera, renderer.domElement); // Allow rotation, pan, zoom, etc. with the mouse
-var infoBox = new SecondaryBox("Teste");
+// var infoBox = new SecondaryBox("Teste");
 
 // Listen for window size changes
 window.addEventListener(
@@ -106,7 +106,7 @@ function render() {
   // this.bbhelpers = true;
   keyboardUpdateTank1(tank1, bbTank1);
   keyboardUpdateTank2(tank2, bbTank2);
-  infoBox.changeMessage("No collision detected");
+  // infoBox.changeMessage("No collision detected");
   checkCollisions(tank1, bbTank1, tank2, bbTank2, bbWalls);
   requestAnimationFrame(render);
   renderer.render(scene, camera);

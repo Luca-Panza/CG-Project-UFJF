@@ -10,6 +10,7 @@ function keyboardUpdateTank1(tank1, bbTank1) {
   // salvando a posição anterior do tanque para restaurar em caso de colisão
   tank1.previousPosition = tank1.position.clone();
 
+  // movimentação do tanque
   if (keyboard.pressed("W")) tank1.translateX(moveDistance);
   if (keyboard.pressed("S")) tank1.translateX(-moveDistance);
   if (keyboard.pressed("A")) tank1.rotateY(rotateAngle);
@@ -24,6 +25,7 @@ function keyboardUpdateTank2(tank2, bbTank2) {
   // salvando a posição anterior do tanque para restaurar em caso de colisão
   tank2.previousPosition = tank2.position.clone();
 
+  // movimentação do tanque
   if (keyboard.pressed("up")) tank2.translateX(moveDistance);
   if (keyboard.pressed("down")) tank2.translateX(-moveDistance);
   if (keyboard.pressed("left")) tank2.rotateY(rotateAngle);
