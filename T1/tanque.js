@@ -101,14 +101,20 @@ let bbHelper2 = createBBHelper(bbTank2, 'white');
 scene.add(tank1);
 scene.add(tank2);
 
-function checkCollisionsTankTank(tank1, tank2)
+function checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2)
 {
-  let collision = tank1.intersectsBox(tank2);
-  if (collision) infoBox.changeMessage("Collision detected");
-  // em caso de colisão restaura a posição antiga 
-  // tank1.position.copy(tank.previousPosition);
-  // //atualiza os limites
-  // bbTank.setFromObject(tank);
+  let collision = bbTank1.intersectsBox(bbTank2);
+  if (collision) {
+    infoBox.changeMessage("Collision detected");
+    // em caso de colisão restaura a posição antiga 
+    tank1.position.copy(tank1.previousPosition);
+    //atualiza os limites
+    bbTank1.setFromObject(tank1);
+    // em caso de colisão restaura a posição antiga 
+    tank2.position.copy(tank2.previousPosition);
+    //atualiza os limites
+    bbTank2.setFromObject(tank2);
+  }
 }
 
 function checkCollisionsTankWall(tank, bbTank)
@@ -131,7 +137,7 @@ function render() {
   keyboardUpdateTank1(tank1, bbTank1);
   keyboardUpdateTank2(tank2, bbTank2);
   infoBox.changeMessage("No collision detected");
-  checkCollisionsTankTank(bbTank1, bbTank2); 
+  checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2); 
   checkCollisionsTankWall(tank1, bbTank1);
   checkCollisionsTankWall(tank2, bbTank2);
   requestAnimationFrame(render);
