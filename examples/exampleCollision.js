@@ -48,6 +48,8 @@ let bbSphere1 = new THREE.Box3().setFromObject(sphere1);
 let bbHelper1 = createBBHelper(bbSphere1, 'white')
 scene.add(sphere1);
 
+// olhar aqui
+
 let sphere2 = createSphere(0.0, 0.2, -1.8);
 let bbSphere2 = new THREE.Box3().setFromObject(sphere2);
 let bbHelper2 = createBBHelper(bbSphere2, 'white')
@@ -165,7 +167,7 @@ function updateAsset()
    }
 }
 
-function checkCollisions(object)
+function checkCollisions(object) // olhar aqui
 {
    let collision = asset.bb.intersectsBox(object);
    if(collision) infoBox.changeMessage("Collision detected");

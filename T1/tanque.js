@@ -24,6 +24,7 @@ camera = initCamera(new THREE.Vector3(0, 15, 30)); // Initialize the camera at t
 material = setDefaultMaterial(); // Create a default material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 orbit = new OrbitControls(camera, renderer.domElement); // Allow rotation, pan, zoom, etc. with the mouse
+var infoBox = new SecondaryBox("Teste");
 
 // Listen for window size changes
 window.addEventListener(
@@ -39,6 +40,10 @@ const planeWidth = 85;
 const planeHeight = 60;
 let plane = createGroundPlaneXZ(planeWidth, planeHeight);
 scene.add(plane);
+
+// criando esse objeto para guardar as paredes do cenário e seus limites
+const walls = [];
+const bbWalls = [];
 
 // Function to create the level based on the current level matrix
 function createLevel(levelData) {
@@ -59,6 +64,11 @@ function createLevel(levelData) {
         const posY = 2.5;
         const posZ = -i * 5 + offsetZ;
         wall.position.set(posX, posY, posZ);
+        let bbWall = new THREE.Box3();
+        bbWall.setFromObject(wall);
+        let bbHelperWall = createBBHelper(bbWall, 'white');
+        walls.push(wall);
+        bbWalls.push(bbWall);
         scene.add(wall);
       }
     }
@@ -68,16 +78,62 @@ function createLevel(levelData) {
 // Create the current level
 createLevel(levels[currentLevelIndex]);
 
-// Create the tanks and add them to the scene
+function createBBHelper(bb, color) {
+  // Create a bounding box helper
+  let helper = new THREE.Box3Helper(bb, color);
+  scene.add(helper);
+  return helper;
+}
+
+// Criando os tanques e seus bounding box e adiciondo a cena
 const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
 const tank2 = createTank(0x0000ff, new THREE.Vector3(20, 0, 15));
+
+
+let bbTank1 = new THREE.Box3();
+bbTank1.setFromObject(tank1);
+let bbHelper1 = createBBHelper(bbTank1, 'white');
+
+let bbTank2 = new THREE.Box3();
+bbTank2.setFromObject(tank2);
+let bbHelper2 = createBBHelper(bbTank2, 'white');
 
 scene.add(tank1);
 scene.add(tank2);
 
+function checkCollisionsTankTank(tank1, tank2)
+{
+  let collision = tank1.intersectsBox(tank2);
+  if (collision) infoBox.changeMessage("Collision detected");
+  // em caso de colisão restaura a posição antiga 
+  // tank1.position.copy(tank.previousPosition);
+  // //atualiza os limites
+  // bbTank.setFromObject(tank);
+}
+
+function checkCollisionsTankWall(tank, bbTank)
+{
+  for (let i = 0; i < bbWalls.length; i++) {
+    const bbWall = bbWalls[i]; // Access the current bounding box object
+    let collision = bbWall.intersectsBox(bbTank);
+    if (collision){
+      infoBox.changeMessage("Collision detected");
+      // em caso de colisão restaura a posição antiga 
+      tank.position.copy(tank.previousPosition);
+      //atualiza os limites
+      bbTank.setFromObject(tank);
+    }
+  }
+}
+
 function render() {
-  keyboardUpdateTank1(tank1);
-  keyboardUpdateTank2(tank2);
+  // this.bbhelpers = true;
+  keyboardUpdateTank1(tank1, bbTank1);
+  keyboardUpdateTank2(tank2, bbTank2);
+  infoBox.changeMessage("No collision detected");
+  checkCollisionsTankTank(bbTank1, bbTank2); 
+  checkCollisionsTankWall(tank1, bbTank1);
+  checkCollisionsTankWall(tank2, bbTank2);
   requestAnimationFrame(render);
   renderer.render(scene, camera);
 }
