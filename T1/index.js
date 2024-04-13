@@ -16,7 +16,8 @@ import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardTan
 import { checkCollisions } from "./controls/checkCollisions.js";
 import { levels } from "./constants/constants.js";
 
-let scene, renderer, camera, material, light, orbit; // Initial variables
+let scene, renderer, camera, material, light, orbit, prevCameraPosition; // Variável global para a posição anterior da câmera
+let orbitControlsEnabled = false; // Variável global para controlar se os controles orbitais estão ativados
 let currentLevelIndex = 0; // Index of the current level
 
 scene = new THREE.Scene(); // Create the main scene
@@ -24,7 +25,9 @@ renderer = initRenderer(); // Initialize a basic renderer
 camera = initCamera(new THREE.Vector3(0, 15, 30)); // Initialize the camera at this position
 material = setDefaultMaterial(); // Create a default material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-orbit = new OrbitControls(camera, renderer.domElement); // Allow rotation, pan, zoom, etc. with the mouse
+// Inicialização dos controles orbitais (inicialmente desativados)
+orbit = new OrbitControls(camera, renderer.domElement);
+orbit.enabled = false; // Desativar os controles orbitais inicialmente
 // var infoBox = new SecondaryBox("Teste");
 
 // Listen for window size changes
@@ -35,6 +38,22 @@ window.addEventListener(
   },
   false
 );
+
+window.addEventListener('keydown', function(event) {
+  if (event.key === 'o') {
+    orbitControlsEnabled = !orbitControlsEnabled; // Alternar entre habilitar e desabilitar os controles orbitais
+    
+    if (orbitControlsEnabled) {
+      // Se os controles orbitais estiverem sendo ativados, salve a posição atual da câmera
+      prevCameraPosition = camera.position.clone();
+      orbit.enabled = true;
+    } else {
+      // Se os controles orbitais estiverem sendo desativados, restaure a posição da câmera
+      orbit.enabled = false;
+      camera.position.copy(prevCameraPosition);
+    }
+  }
+});
 
 // Create the ground plane
 const planeWidth = 85;
@@ -102,12 +121,33 @@ bbTank2.setFromObject(tank2);
 scene.add(tank1);
 scene.add(tank2);
 
+function updateCameraPosition() {
+  const minDistance = 15;
+
+  const midpoint = new THREE.Vector3().addVectors(tank1.position, tank2.position).multiplyScalar(0.5);
+  const distance = tank1.position.distanceTo(tank2.position);
+
+  const adjustedDistance = Math.max(distance, minDistance);
+  const angle = Math.PI / 2;
+
+  if (!orbitControlsEnabled) { // Apenas ajuste a posição da câmera se os controles orbitais estiverem desativados
+    // Calcula as coordenadas x, y e z da posição da câmera com base no ângulo e na distância ajustada
+    const offsetX = Math.cos(angle) * adjustedDistance;
+    const offsetY = adjustedDistance;
+    const offsetZ = Math.sin(angle) * adjustedDistance;
+
+    camera.position.set(midpoint.x + offsetX, midpoint.y + offsetY, midpoint.z + offsetZ);
+    camera.lookAt(midpoint);
+  }
+}
+
 function render() {
   // this.bbhelpers = true;
   keyboardUpdateTank1(tank1, bbTank1);
   keyboardUpdateTank2(tank2, bbTank2);
   // infoBox.changeMessage("No collision detected");
   checkCollisions(tank1, bbTank1, tank2, bbTank2, bbWalls);
+  updateCameraPosition();
   requestAnimationFrame(render);
   renderer.render(scene, camera);
 }
