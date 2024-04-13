@@ -66,7 +66,7 @@ function createLevel(levelData) {
         wall.position.set(posX, posY, posZ);
         let bbWall = new THREE.Box3();
         bbWall.setFromObject(wall);
-        let bbHelperWall = createBBHelper(bbWall, 'white');
+        //let bbHelperWall = createBBHelper(bbWall, 'white');
         walls.push(wall);
         bbWalls.push(bbWall);
         scene.add(wall);
@@ -92,11 +92,11 @@ const tank2 = createTank(0x0000ff, new THREE.Vector3(20, 0, 15));
 
 let bbTank1 = new THREE.Box3();
 bbTank1.setFromObject(tank1);
-let bbHelper1 = createBBHelper(bbTank1, 'white');
+// let bbHelper1 = createBBHelper(bbTank1, 'white');
 
 let bbTank2 = new THREE.Box3();
 bbTank2.setFromObject(tank2);
-let bbHelper2 = createBBHelper(bbTank2, 'white');
+// let bbHelper2 = createBBHelper(bbTank2, 'white');
 
 scene.add(tank1);
 scene.add(tank2);
