@@ -14,13 +14,12 @@ import {
 import { createTank } from "./components/createTank.js";
 import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardTanks.js";
 import { checkCollisions } from "./controls/checkCollisions.js";
-import { levels } from "./constants/constants.js";
+import { levels, scene } from "./constants/constants.js";
 
-let scene, renderer, camera, material, light, orbit, prevCameraPosition; // Variável global para a posição anterior da câmera
+let renderer, camera, material, light, orbit, prevCameraPosition; // Variável global para a posição anterior da câmera
 let orbitControlsEnabled = false; // Variável global para controlar se os controles orbitais estão ativados
 let currentLevelIndex = 0; // Index of the current level
 
-scene = new THREE.Scene(); // Create the main scene
 renderer = initRenderer(); // Initialize a basic renderer
 camera = initCamera(new THREE.Vector3(0, 15, 30)); // Initialize the camera at this position
 material = setDefaultMaterial(); // Create a default material

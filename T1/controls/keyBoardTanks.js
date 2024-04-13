@@ -1,5 +1,6 @@
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { moveDistance, rotateAngle } from "../constants/constants.js";
+import { Ball } from "../components/ball.js";
 
 // Instância do KeyboardState
 var keyboard = new KeyboardState();
@@ -17,6 +18,12 @@ function keyboardUpdateTank1(tank1, bbTank1) {
   if (keyboard.pressed("D")) tank1.rotateY(-rotateAngle);
 
   bbTank1.setFromObject(tank1);
+
+  let ball = new Ball();
+  if (keyboard.pressed("space")) {
+    ball.startMoving(true); 
+  }
+  ball.move();
 }
 
 function keyboardUpdateTank2(tank2, bbTank2) {

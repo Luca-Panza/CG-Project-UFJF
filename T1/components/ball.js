@@ -1,13 +1,12 @@
-class Ball {
-    constructor(tank, posx, posy, posz) {
+import * as THREE from 'three';
+import { scene } from '../constants/constants.js';
+//-- Ball Class -----------------------------------------------------------
+export class Ball {
+    constructor() {
         this.speed = 0.1;
-        this.moveOn = false;
-        this.direction = new THREE.Vector3(0.7, 0.0, 0.4).normalize(); // descobrir como pegar a direção na qual o canhão está aprontando e colocar aqui tbm
+        this.moveOn = true;
+        this.direction = new THREE.Vector3(0.7, 0.0, 0.4).normalize();
         this.object = this.buildGeometry()
-        this.posx = posx;
-        this.posy = posy;
-        this.posz = posz;
-        this.tank = tank;
         scene.add(this.object);
     }
     getSpeed() {
@@ -42,9 +41,9 @@ class Ball {
         this.direction = direction.normalize();
     }
     buildGeometry() {
-        let obj = new THREE.Mesh(new THREE.SphereGeometry(0.5, 2, 2),
+        let obj = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32),
             new THREE.MeshPhongMaterial({ color: "red", shininess: "200" }));
-        obj.position.set(this.posx, this.posy, this.posz);
+        obj.position.set(0, 0.5, 0);
         obj.castShadow = true;
         return obj;
     }
