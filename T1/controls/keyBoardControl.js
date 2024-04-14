@@ -1,13 +1,13 @@
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { moveDistance, rotateAngle } from "../constants/constants.js";
-import { Ball } from "../components/ball.js";
+import { Ball } from "../components/createBall.js";
 
 // Instância do KeyboardState
 var keyboard = new KeyboardState();
 
 function keyboardUpdateTank1(tank1, bbTank1) {
   keyboard.update();
-  
+
   // salvando a posição anterior do tanque para restaurar em caso de colisão
   tank1.previousPosition = tank1.position.clone();
 
@@ -21,7 +21,7 @@ function keyboardUpdateTank1(tank1, bbTank1) {
 
   let ball = new Ball();
   if (keyboard.pressed("space")) {
-    ball.startMoving(true); 
+    ball.startMoving(true);
   }
   ball.move();
 }
@@ -39,7 +39,7 @@ function keyboardUpdateTank2(tank2, bbTank2) {
   if (keyboard.pressed("right")) tank2.rotateY(-rotateAngle);
 
   // toda vez que anda com o tanque também tem que fazer com que o bound box ande com ele
-  bbTank2.setFromObject(tank2); 
+  bbTank2.setFromObject(tank2);
 }
 
 export { keyboardUpdateTank1, keyboardUpdateTank2 };

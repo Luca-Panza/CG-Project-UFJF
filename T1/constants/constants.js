@@ -1,8 +1,10 @@
-// Tank movement and rotation constants
 import * as THREE from 'three';
+
+const scene = new THREE.Scene(); // Create the main scene
+
+// Tank movement and rotation constants
 const moveDistance = 0.25;
 const rotateAngle = (Math.PI / 2) * 0.02;
-const scene = new THREE.Scene(); // Create the main scene
 
 const levels = [
   // Arrays of levels
