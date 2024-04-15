@@ -17,7 +17,7 @@ import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardCon
 import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
 import { createBBHelper } from "./helpers/bbHelper.js";
-import { levels, scene } from "./constants/constants.js";
+import { levels, scene, bbWalls } from "./constants/constants.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition; // Variável global para a posição anterior da câmera
 let orbitControlsEnabled = false; // Variável global para controlar se os controles orbitais estão ativados
@@ -64,7 +64,7 @@ let plane = createGroundPlaneXZ(planeWidth, planeHeight);
 scene.add(plane);
 
 // Function to create the level based on the current level matrix
-let { walls, bbWalls } = createLevel(levels[currentLevelIndex], planeWidth, planeHeight, scene);
+createLevel(levels[currentLevelIndex], planeWidth, planeHeight, scene);
 
 // Criando os tanques e seus bounding box e adicionando a cena
 const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));

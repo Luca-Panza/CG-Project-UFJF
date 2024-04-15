@@ -1,8 +1,7 @@
-import * as THREE from "three";
-
+import * as THREE from "three"; 
+import { walls , bbWalls } from "../constants/constants.js"
+ 
 function createLevel(levelData, planeWidth, planeHeight, scene) {
-  const walls = [];
-  const bbWalls = [];
   const wallGeometry = new THREE.BoxGeometry(5, 5, 5);
   const wallMaterial = new THREE.MeshBasicMaterial({ color: "grey" });
 
@@ -25,8 +24,6 @@ function createLevel(levelData, planeWidth, planeHeight, scene) {
       }
     }
   }
-
-  return { walls, bbWalls };
 }
 
 export { createLevel };

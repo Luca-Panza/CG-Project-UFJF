@@ -11,11 +11,6 @@ var keyboard = new KeyboardState();
 var ballsTank1 = [];
 var ballsTank2 = [];
 
-// Controles de temporização para atirar
-var lastShotTimeTank1 = 0;
-var lastShotTimeTank2 = 0;
-const shotCoolDown = 2000; // Tempo de CoolDown em milissegundos (2000 ms = 2 segundos)
-
 function keyboardUpdateTank1(tank1, bbTank1) {
   keyboard.update();
 
@@ -28,8 +23,7 @@ function keyboardUpdateTank1(tank1, bbTank1) {
 
   bbTank1.setFromObject(tank1);
 
-  if (keyboard.pressed("space") && Date.now() - lastShotTimeTank1 >= shotCoolDown) {
-    lastShotTimeTank1 = Date.now();
+  if (keyboard.down("space")) {
     let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
     direction.applyQuaternion(tank1.quaternion); // Aplica a rotação do tanque ao vetor
     let ball = new Ball(direction);
@@ -55,8 +49,7 @@ function keyboardUpdateTank2(tank2, bbTank2) {
   bbTank2.setFromObject(tank2);
 
   // Verifica o tempo para permitir atirar novamente
-  if (keyboard.pressed(",") && Date.now() - lastShotTimeTank2 >= shotCoolDown) {
-    lastShotTimeTank2 = Date.now();
+  if (keyboard.down(",") ) {
     let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
     direction.applyQuaternion(tank2.quaternion); // Aplica a rotação do tanque ao vetor
     let ball = new Ball(direction);

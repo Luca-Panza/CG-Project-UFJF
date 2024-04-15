@@ -6,6 +6,9 @@ const scene = new THREE.Scene(); // Create the main scene
 const moveDistance = 0.25;
 const rotateAngle = (Math.PI / 2) * 0.02;
 
+const walls = [];
+const bbWalls = [];
+
 const levels = [
   // Arrays of levels
   [
@@ -25,4 +28,4 @@ const levels = [
   ],
 ];
 
-export { moveDistance, rotateAngle, levels, scene };
+export { moveDistance, rotateAngle, levels, scene, walls, bbWalls };

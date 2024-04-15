@@ -1,12 +1,16 @@
 import * as THREE from "three";
-import { scene } from "../constants/constants.js";
+import { scene, bbWalls } from "../constants/constants.js";
 //-- Ball Class -----------------------------------------------------------
 export class Ball {
   constructor(direction) {
-    this.speed = 0.1;
+    this.speed = 0.5;
     this.moveOn = true;
-    this.direction = direction.normalize(); // Utilize a direção passada
+    this.direction = new THREE.Vector3(0.7, 0.0, 0.4).normalize();
     this.object = this.buildGeometry();
+    this.bbBall = new THREE.Box3();
+    this.bbBall.setFromObject(this.object);
+    //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
+    //scene.add(this.bbHelper1);
     scene.add(this.object);
   }
   getSpeed() {
@@ -20,19 +24,29 @@ export class Ball {
   }
   move() {
     if (!this.moveOn) return;
+    this.object.previousPosition = this.object.position.clone();
     let step = this.direction.clone().multiplyScalar(this.speed);
     this.object.position.add(step);
+    this.bbBall.setFromObject(this.object);
 
     this.checkCollisions();
   }
   checkCollisions() {
-    // Aqui pode-se incluir critérios de colisão mais sofisticados.
-    // Neste exemplo mais simples o controle é feito analisando as fronteiras do plano
-    let size = 4.5;
-    if (this.object.position.x > size) this.changeDirection(new THREE.Vector3(-1.0, 0.0, 0.0));
-    if (this.object.position.x < -size) this.changeDirection(new THREE.Vector3(1.0, 0.0, 0.0));
-    if (this.object.position.z > size) this.changeDirection(new THREE.Vector3(0.0, 0.0, -1.0));
-    if (this.object.position.z < -size) this.changeDirection(new THREE.Vector3(0.0, 0.0, 1.0));
+    for (let i = 0; i < bbWalls.length; i++) {
+      const bbWall = bbWalls[i];
+      let collision = bbWall.intersectsBox(this.bbBall);
+      if (collision) {
+        // console.log("colidiu");
+        this.object.position.copy(this.object.previousPosition);
+        console.log(this.direction);
+        this.changeDirection(new THREE.Vector3(-this.direction.x, this.direction.y, this.direction.z));
+        // deixar isso por enquanto, e mudaar de acordo com o áudios
+        // pegar para ver quantas vezes colidiu e destruir
+        // tentar fazer a colisao do tiro com o tanque inimigo
+        console.log(this.direction);
+        this.bbBall.setFromObject(this.object);
+      }
+    }
   }
   changeDirection(normal) {
     this.direction.reflect(normal).normalize();
@@ -42,7 +56,7 @@ export class Ball {
   }
   buildGeometry() {
     let obj = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), new THREE.MeshPhongMaterial({ color: "white", shininess: "200" }));
-    obj.position.set(0, 0.5, 0);
+    obj.position.set(0, 1, 0);
     obj.castShadow = true;
     return obj;
   }
