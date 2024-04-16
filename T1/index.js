@@ -89,8 +89,8 @@ scene.add(bbHelper1);
 scene.add(bbHelper2);
 
 function render() {
-  keyboardUpdateTank1(tank1, bbTank1);
-  keyboardUpdateTank2(tank2, bbTank2);
+  keyboardUpdateTank1(tank1, bbTank1, bbTank2);
+  keyboardUpdateTank2(tank2, bbTank2, bbTank1);
   checkCollisions(tank1, bbTank1, tank2, bbTank2, bbWalls);
   updateCameraPosition(camera, tank1, tank2, orbitControlsEnabled);
 

@@ -16,7 +16,7 @@ var lastShotTimeTank1 = 0;
 var lastShotTimeTank2 = 0;
 const shotCoolDown = 500;
 
-function keyboardUpdateTank1(tank1, bbTank1) {
+function keyboardUpdateTank1(tank1, bbTank1, bbTankInimigo) {
   keyboard.update();
 
   tank1.previousPosition = tank1.position.clone();
@@ -32,7 +32,7 @@ function keyboardUpdateTank1(tank1, bbTank1) {
     lastShotTimeTank1 = Date.now();
     let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
     direction.applyQuaternion(tank1.quaternion); // Aplica a rotação do tanque ao vetor
-    let ball = new Ball(direction);
+    let ball = new Ball(direction, 2,  bbTankInimigo);
     ball.object.position.copy(tank1.position);
     ball.startMoving(true);
     ballsTank1.push(ball);
@@ -40,7 +40,7 @@ function keyboardUpdateTank1(tank1, bbTank1) {
   ballsTank1.forEach((ball) => ball.move());
 }
 
-function keyboardUpdateTank2(tank2, bbTank2) {
+function keyboardUpdateTank2(tank2, bbTank2, bbTankInimigo) {
   keyboard.update();
 
   // salvando a posição anterior do tanque para restaurar em caso de colisão
@@ -59,11 +59,12 @@ function keyboardUpdateTank2(tank2, bbTank2) {
     lastShotTimeTank2 = Date.now();
     let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
     direction.applyQuaternion(tank2.quaternion); // Aplica a rotação do tanque ao vetor
-    let ball = new Ball(direction);
+    let ball = new Ball(direction, 1 , bbTankInimigo);
     ball.object.position.copy(tank2.position);
     ball.startMoving(true);
     ballsTank2.push(ball);
   }
+  ballsTank2.forEach((ball) => ball.move());
 }
 
 export { keyboardUpdateTank1, keyboardUpdateTank2 };
