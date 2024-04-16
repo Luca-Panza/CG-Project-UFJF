@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
+import { Tank } from "./components/createTank.js";
 import {
   initRenderer,
   initCamera,
@@ -11,7 +12,7 @@ import {
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
 
-import { createTank } from "./components/createTank.js";
+// import { createTank } from "./components/createTank.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardControl.js";
 import { checkCollisions } from "./controls/collisionsControl.js";
@@ -67,20 +68,22 @@ scene.add(plane);
 createLevel(levels[currentLevelIndex], planeWidth, planeHeight, scene);
 
 // Criando os tanques
-const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
-const tank2 = createTank(0x4169e1, new THREE.Vector3(20, 0, 15));
+let tank1 = new Tank(0xff0000, new THREE.Vector3(-20, 0, 15));
+let tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
+//const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
+//const tank2 = createTank(0x4169e1, new THREE.Vector3(20, 0, 15));
 
 // Adicionando os tanques à cena
-scene.add(tank1);
-scene.add(tank2);
+scene.add(tank1.object );
+scene.add(tank2.object );
 
 // Criando os bounding boxes dos tanques
 let bbTank1 = new THREE.Box3();
 let bbTank2 = new THREE.Box3();
 
 // Definindo os bounding boxes dos tanques
-bbTank1.setFromObject(tank1);
-bbTank2.setFromObject(tank2);
+bbTank1.setFromObject(tank1.object);
+bbTank2.setFromObject(tank2.object);
 
 // Adicionando os bounding boxes dos tanques à cena
 let bbHelper1 = createBBHelper(bbTank1, "white");
@@ -89,10 +92,10 @@ scene.add(bbHelper1);
 scene.add(bbHelper2);
 
 function render() {
-  keyboardUpdateTank1(tank1, bbTank1, bbTank2);
-  keyboardUpdateTank2(tank2, bbTank2, bbTank1);
-  checkCollisions(tank1, bbTank1, tank2, bbTank2, bbWalls);
-  updateCameraPosition(camera, tank1, tank2, orbitControlsEnabled);
+  keyboardUpdateTank1(tank1.object , bbTank1, bbTank2);
+  keyboardUpdateTank2(tank2.object , bbTank2, bbTank1);
+  checkCollisions(tank1.object, bbTank1, tank2, bbTank2, bbWalls);
+  updateCameraPosition(camera, tank1.object, tank2.object , orbitControlsEnabled);
 
   // Ajustando a visibilidade dos helpers
   bbHelper1.visible = false;
