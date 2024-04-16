@@ -1,11 +1,13 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-const scene = new THREE.Scene(); // Create the main scene
+// Create the main scene
+const scene = new THREE.Scene();
 
 // Tank movement and rotation constants
 const moveDistance = 0.25;
 const rotateAngle = (Math.PI / 2) * 0.02;
 
+// Walls and bounding boxes
 const walls = [];
 const bbWalls = [];
 

@@ -66,20 +66,27 @@ scene.add(plane);
 // Function to create the level based on the current level matrix
 createLevel(levels[currentLevelIndex], planeWidth, planeHeight, scene);
 
-// Criando os tanques e seus bounding box e adicionando a cena
+// Criando os tanques
 const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
 const tank2 = createTank(0x4169e1, new THREE.Vector3(20, 0, 15));
 
-let bbTank1 = new THREE.Box3();
-bbTank1.setFromObject(tank1);
-let bbHelper1 = createBBHelper(bbTank1, "white");
-
-let bbTank2 = new THREE.Box3();
-bbTank2.setFromObject(tank2);
-let bbHelper2 = createBBHelper(bbTank2, "white");
-
+// Adicionando os tanques à cena
 scene.add(tank1);
 scene.add(tank2);
+
+// Criando os bounding boxes dos tanques
+let bbTank1 = new THREE.Box3();
+let bbTank2 = new THREE.Box3();
+
+// Definindo os bounding boxes dos tanques
+bbTank1.setFromObject(tank1);
+bbTank2.setFromObject(tank2);
+
+// Adicionando os bounding boxes dos tanques à cena
+let bbHelper1 = createBBHelper(bbTank1, "white");
+let bbHelper2 = createBBHelper(bbTank2, "white");
+scene.add(bbHelper1);
+scene.add(bbHelper2);
 
 function render() {
   keyboardUpdateTank1(tank1, bbTank1);

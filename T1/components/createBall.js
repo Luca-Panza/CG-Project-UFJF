@@ -9,14 +9,11 @@ export class Ball {
     this.object = this.buildGeometry();
     this.bbBall = new THREE.Box3();
     this.bbBall.setFromObject(this.object);
-    this.colisoesParede = 0; 
-    //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
-    //scene.add(this.bbHelper1);
+    this.object.previousPosition = this.object.position.clone();
+    this.collisionCount = 0; // Contador de colisões
+    this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
+    scene.add(this.bbHelper1);
     scene.add(this.object);
-  }
-  destroy() {
-    this.object.material.dispose();
-    scene.remove(this.object);
   }
   getSpeed() {
     return this.speed;
@@ -39,31 +36,32 @@ export class Ball {
   checkCollisions() {
     for (let i = 0; i < bbWalls.length; i++) {
       const bbWall = bbWalls[i];
-      let collision = bbWall.intersectsBox(this.bbBall);
-      // checa a colisão do tiro com a parede
-      if (collision) {
-        this.object.position.copy(this.object.previousPosition);
-        // console.log(this.direction);
-        this.changeDirection(new THREE.Vector3(-this.direction.x, this.direction.y, this.direction.z));
-        // deixar isso por enquanto, e mudaar de acordo com o áudios
-        // pegar para ver quantas vezes colidiu e destruir
-        // tentar fazer a colisao do tiro com o tanque inimigo
-        // console.log(this.direction);
-        this.bbBall.setFromObject(this.object);
-        this.colisoesParede = this.colisoesParede + 1;
-        if (this.colisoesParede == 2) {
-          this.destroy();
+      if (bbWall.intersectsBox(this.bbBall)) {
+        this.collisionCount += 1; // Incrementa o contador de colisões
+        if (this.collisionCount >= 3) {
+          this.removeBall(); // Remova a bola se ela colidiu duas vezes
+          break;
         }
+        this.object.position.copy(this.object.previousPosition);
+        if (bbWall.normal) {
+          this.changeDirection(bbWall.normal);
+        } else {
+          console.error("Normal da parede não definida");
+        }
+        this.bbBall.setFromObject(this.object);
+        break; // Pare de verificar outras paredes uma vez que a colisão foi encontrada
       }
     }
   }
-  NumColisoesParede(){
-    this.colisoesParede++;
-    if(this.colisoesParede == 2){
-      this.destroy();
-    }
+  removeBall() {
+    scene.remove(this.object); // Remove a bola da cena
+    this.moveOn = false; // Para o movimento da bola
   }
   changeDirection(normal) {
+    if (!normal) {
+      console.error("Normal is undefined, cannot change direction.");
+      return;
+    }
     this.direction.reflect(normal).normalize();
   }
   setDirection(direction) {

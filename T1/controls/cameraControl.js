@@ -19,28 +19,4 @@ function updateCameraPosition(camera, tank1, tank2, orbitControlsEnabled) {
   }
 }
 
-/*
-
-function toggleOrbitControls(camera, orbit, prevCameraPosition, orbitControlsEnabled) {
-  const minDistance = 35;
-
-  window.addEventListener("keydown", function (event) {
-    if (event.key === "o") {
-      orbitControlsEnabled = !orbitControlsEnabled; // Alternar entre habilitar e desabilitar os controles orbitais
-
-      if (orbitControlsEnabled) {
-        // Se os controles orbitais estiverem sendo ativados, salve a posição atual da câmera
-        prevCameraPosition = camera.position.clone();
-        orbit.enabled = true;
-      } else {
-        // Se os controles orbitais estiverem sendo desativados, restaure a posição da câmera
-        orbit.enabled = false;
-        camera.position.copy(prevCameraPosition);
-      }
-    }
-  });
-}
-
-*/
-
-export { updateCameraPosition /*toggleOrbitControls*/ };
+export { updateCameraPosition };
