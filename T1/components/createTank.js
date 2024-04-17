@@ -16,6 +16,10 @@ export class Tank {
     // scene.add(this.object);
   }
 
+  setPosition(position){
+    this.position = position;
+  }
+
   //  to add a tire to the tank
   addTire(tank, posX, posY, posZ) {
     // Geometry and material for the outer tire

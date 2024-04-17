@@ -6,12 +6,10 @@ import {
   initCamera,
   initDefaultBasicLight,
   setDefaultMaterial,
-  // InfoBox,
-  SecondaryBox,
   onWindowResize,
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
-import { InfoBox, InfoBox2 } from "./util/util.js"
+import { InfoBox, InfoBox2, InfoBoxTopEsquerda, InfoBoxTopDireita, SecondaryBoxTopEsquerda, SecondaryBoxTopDireita } from "./util/util.js"
 
 // import { createTank } from "./components/createTank.js";
 import { createLevel } from "./components/createLevel.js";
@@ -95,7 +93,7 @@ scene.add(bbHelper2);
 buildTutorial();
 
 function buildTutorial() {
-  var controls = new InfoBox();
+  let controls = new InfoBox();
   controls.add("Tanque 1");
   controls.addParagraph();
   controls.add("Mover");
@@ -106,7 +104,7 @@ function buildTutorial() {
   controls.add("Espaço ou Q");
   controls.show();
 
-  var controls2 = new InfoBox2();
+  let controls2 = new InfoBox2();
   controls2.add("Tanque 2");
   controls2.addParagraph();
   controls2.add("Mover");
@@ -118,11 +116,38 @@ function buildTutorial() {
   controls2.show();
 }
 
+const placar1 = new SecondaryBoxTopEsquerda();
+const placar2 = new SecondaryBoxTopDireita();
+function mostraPlacar(){
+  placar1.changeMessage("Dano Tanque 1 (Vermelho) " + tank1.dano);
+  placar2.changeMessage("Dano Tanque 2 (Azul) " + tank2.dano);
+}
+
+function resetaJogo() {
+  tank1.dano = 0;
+  tank2.dano = 0;
+  location.reload();
+}
+
+function VerificaPlacar() {
+  if(tank1.dano >= 10){
+    alert("Tanque 2 (azul) venceu!")
+    resetaJogo();
+  } else if (tank2.dano >= 10) {
+    alert("Tanque 1 (vermelho) venceu!")
+    resetaJogo();
+  }
+}
+
+
 function render() {
-  keyboardUpdateTank1(tank1 , bbTank1, bbTank2);
-  keyboardUpdateTank2(tank2 , bbTank2, bbTank1);
+  keyboardUpdateTank1(tank1 , bbTank1, tank2, bbTank2);
+  keyboardUpdateTank2(tank2 , bbTank2, tank1, bbTank1);
   checkCollisions(tank1.object, bbTank1, tank2.object, bbTank2, bbWalls);
   updateCameraPosition(camera, tank1.object, tank2.object , orbitControlsEnabled);
+
+  mostraPlacar();
+  VerificaPlacar();
 
   // Ajustando a visibilidade dos helpers
   bbHelper1.visible = false;
