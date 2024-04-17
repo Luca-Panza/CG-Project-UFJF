@@ -30,8 +30,15 @@ function keyboardUpdateTank1(tank1, bbTank1, tankInimigo, bbTankInimigo) {
 
   if ((keyboard.pressed("space") || keyboard.pressed("Q")) && Date.now() - lastShotTimeTank1 >= shotCoolDown) {
     lastShotTimeTank1 = Date.now();
-    let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
-    direction.applyQuaternion(tank1.object.quaternion); // Aplica a rotação do tanque ao vetor
+    // let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
+    // direction.applyQuaternion(tank1.object.quaternion); // Aplica a rotação do tanque ao vetor
+    const direction = new THREE.Vector3();
+    tank1.object.getWorldDirection(direction);
+
+    // codigo para arrumar e rotacionar a posição da bola de acordo com a rotação que foi feita ao criar o canhão
+    const axisY = new THREE.Vector3(0, 1, 0);
+    direction.applyAxisAngle(axisY, Math.PI / 2);
+    
     let ball = new Ball(direction, tankInimigo,  bbTankInimigo);
     ball.object.position.copy(tank1.object.position);
     ball.startMoving(true);
@@ -57,8 +64,13 @@ function keyboardUpdateTank2(tank2, bbTank2, tankInimigo, bbTankInimigo) {
   // Verifica o tempo para permitir atirar novamente
   if ((keyboard.pressed(",") || keyboard.pressed("/")) && Date.now() - lastShotTimeTank2 >= shotCoolDown) {
     lastShotTimeTank2 = Date.now();
-    let direction = new THREE.Vector3(0, 0, 1); // Direção frente em relação ao tanque
-    direction.applyQuaternion(tank2.object.quaternion); // Aplica a rotação do tanque ao vetor
+    const direction = new THREE.Vector3();
+    tank2.object.getWorldDirection(direction);
+
+    // codigo para arrumar e rotacionar a posição da bola de acordo com a rotação que foi feita ao criar o canhão
+    const axisY = new THREE.Vector3(0, 1, 0);
+    direction.applyAxisAngle(axisY, Math.PI / 2);
+    
     let ball = new Ball(direction, tankInimigo , bbTankInimigo);
     ball.object.position.copy(tank2.object.position);
     ball.startMoving(true);

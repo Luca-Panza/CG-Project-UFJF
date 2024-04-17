@@ -5,7 +5,7 @@ export class Ball {
   constructor(direction, tankInimigo, bbTankInimigo) {
     this.speed = 0.5;
     this.moveOn = true;
-    this.direction = new THREE.Vector3(0.7, 0.0, 0.4).normalize();
+    this.direction = direction;
     this.object = this.buildGeometry();
     this.ballHasBeenHit = false; // usado para verificar se a bola atingiu o tank 
     this.bbBall = new THREE.Box3();
