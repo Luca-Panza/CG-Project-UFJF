@@ -6,11 +6,12 @@ import {
   initCamera,
   initDefaultBasicLight,
   setDefaultMaterial,
-  InfoBox,
+  // InfoBox,
   SecondaryBox,
   onWindowResize,
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
+import { InfoBox, InfoBox2 } from "./util/util.js"
 
 // import { createTank } from "./components/createTank.js";
 import { createLevel } from "./components/createLevel.js";
@@ -91,10 +92,36 @@ let bbHelper2 = createBBHelper(bbTank2, "white");
 scene.add(bbHelper1);
 scene.add(bbHelper2);
 
+buildTutorial();
+
+function buildTutorial() {
+  var controls = new InfoBox();
+  controls.add("Tanque 1");
+  controls.addParagraph();
+  controls.add("Mover");
+  controls.add("Esquerda/ Direita : A / D");
+  controls.add("Frente/ Trás : W / S");
+  controls.addParagraph();
+  controls.add("Atirar");
+  controls.add("Espaço ou Q");
+  controls.show();
+
+  var controls2 = new InfoBox2();
+  controls2.add("Tanque 2");
+  controls2.addParagraph();
+  controls2.add("Mover");
+  controls2.add("Esquerda/ Direita : Seta Esquerda / Seta Direita");
+  controls2.add("Frente/ Trás : Seta cima / Seta baixo");
+  controls2.addParagraph();
+  controls2.add("Atirar");
+  controls2.add("/ ou ,");
+  controls2.show();
+}
+
 function render() {
-  keyboardUpdateTank1(tank1.object , bbTank1, bbTank2);
-  keyboardUpdateTank2(tank2.object , bbTank2, bbTank1);
-  checkCollisions(tank1.object, bbTank1, tank2, bbTank2, bbWalls);
+  keyboardUpdateTank1(tank1 , bbTank1, bbTank2);
+  keyboardUpdateTank2(tank2 , bbTank2, bbTank1);
+  checkCollisions(tank1.object, bbTank1, tank2.object, bbTank2, bbWalls);
   updateCameraPosition(camera, tank1.object, tank2.object , orbitControlsEnabled);
 
   // Ajustando a visibilidade dos helpers

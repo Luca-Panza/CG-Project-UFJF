@@ -7,10 +7,6 @@ const scene = new THREE.Scene();
 const moveDistance = 0.25;
 const rotateAngle = (Math.PI / 2) * 0.02;
 
-var numTirosLevadosTank1 = 0;
-var numTirosLevadosTank2 = 0;
-
-
 // Walls and bounding boxes
 const walls = [];
 const bbWalls = [];
@@ -34,4 +30,4 @@ const levels = [
   ],
 ];
 
-export { moveDistance, rotateAngle, levels, scene, walls, bbWalls, numTirosLevadosTank1, numTirosLevadosTank2 };
+export { moveDistance, rotateAngle, levels, scene, walls, bbWalls };

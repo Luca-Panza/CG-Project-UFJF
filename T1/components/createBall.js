@@ -1,18 +1,19 @@
 import * as THREE from "three";
-import { scene, bbWalls, numTirosLevadosTank1, numTirosLevadosTank2 } from "../constants/constants.js";
+import { scene, bbWalls } from "../constants/constants.js";
 //-- Ball Class -----------------------------------------------------------
 export class Ball {
-  constructor(direction, tanqueInimigo, bbTankInimigo) {
+  constructor(direction, tankInimigo, bbTankInimigo) {
     this.speed = 0.5;
     this.moveOn = true;
     this.direction = new THREE.Vector3(0.7, 0.0, 0.4).normalize();
     this.object = this.buildGeometry();
+    this.ballHasBeenHit = false; // usado para verificar se a bola atingiu o tank 
     this.bbBall = new THREE.Box3();
     this.bbBall.setFromObject(this.object);
     this.object.previousPosition = this.object.position.clone();
     this.collisionCount = 0; // Contador de colisões
     //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
-    this.tanqueInimigo = tanqueInimigo;
+    this.tankInimigo = tankInimigo;
     this.bbTankInimigo = bbTankInimigo;
     scene.add(this.bbHelper1);
     scene.add(this.object);
@@ -42,12 +43,9 @@ export class Ball {
   }
   checkCollisionsTankInimigo() {
     if (this.bbTankInimigo.intersectsBox(this.bbBall)) {
-      if(this.tanqueInimigo == 1){
-        numTirosLevadosTank1++;
-        console.log(numTirosLevadosTank1);
-      }else{
-        numTirosLevadosTank2++;
-        console.log(numTirosLevadosTank2);
+      if(!this.ballHasBeenHit){
+        this.tankInimigo.dano += 1;
+        this.ballHasBeenHit = true; // variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhao inimigo
       }
       this.destroy();
     }
