@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import { Tank } from "./components/createTank.js";
 import {
   initRenderer,
   initCamera,
@@ -9,11 +8,12 @@ import {
   onWindowResize,
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
-import { InfoBox, InfoBox2, InfoBoxTopEsquerda, InfoBoxTopDireita, SecondaryBoxTopEsquerda, SecondaryBoxTopDireita } from "./util/util.js"
+import { SecondaryBoxTopEsquerda, SecondaryBoxTopDireita } from "./util/util.js";
 
-// import { createTank } from "./components/createTank.js";
+import { Tank } from "./components/createTank.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1, keyboardUpdateTank2 } from "./controls/keyBoardControl.js";
+import { buildTutorial } from "./controls/tutorialControl.js";
 import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
 import { createBBHelper } from "./helpers/bbHelper.js";
@@ -23,16 +23,14 @@ let renderer, camera, material, light, orbit, prevCameraPosition; // Variável g
 let orbitControlsEnabled = false; // Variável global para controlar se os controles orbitais estão ativados
 let currentLevelIndex = 0; // Index of the current level
 
-renderer = initRenderer(); // Initialize a basic renderer
+renderer = initRenderer(); // Initialize a basic rendererInfoBox, InfoBox2,
 camera = initCamera(new THREE.Vector3(0, 15, 30)); // Initialize the camera at this position
 material = setDefaultMaterial(); // Create a default material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-// Inicialização dos controles orbitais (inicialmente desativados)
-orbit = new OrbitControls(camera, renderer.domElement);
-orbit.enabled = false; // Desativar os controles orbitais inicialmente
-// var infoBox = new SecondaryBox("Teste");
+orbit = new OrbitControls(camera, renderer.domElement); // Inicialização dos controles orbitais (inicialmente desativados)
+orbit.enabled = false; // Desativar os controles orbitais
 
-// Listen for window size changes
+// Adicionando um listener para o evento de resize
 window.addEventListener(
   "resize",
   function () {
@@ -41,9 +39,10 @@ window.addEventListener(
   false
 );
 
+// Adicionando um listener para a tecla 'o' para habilitar/desabilitar os controles orbitais
 window.addEventListener("keydown", function (event) {
   if (event.key === "o") {
-    orbitControlsEnabled = !orbitControlsEnabled; // Alternar entre habilitar e desabilitar os controles orbitais
+    orbitControlsEnabled = !orbitControlsEnabled;
 
     if (orbitControlsEnabled) {
       // Se os controles orbitais estiverem sendo ativados, salve a posição atual da câmera
@@ -57,24 +56,22 @@ window.addEventListener("keydown", function (event) {
   }
 });
 
-// Create the ground plane
+// Criando o plano
 const planeWidth = 85;
 const planeHeight = 60;
 let plane = createGroundPlaneXZ(planeWidth, planeHeight);
 scene.add(plane);
 
-// Function to create the level based on the current level matrix
+// Função para criar o nível
 createLevel(levels[currentLevelIndex], planeWidth, planeHeight, scene);
 
 // Criando os tanques
 let tank1 = new Tank(0xff0000, new THREE.Vector3(-20, 0, 15));
 let tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
-//const tank1 = createTank(0xff0000, new THREE.Vector3(-20, 0, 15));
-//const tank2 = createTank(0x4169e1, new THREE.Vector3(20, 0, 15));
 
 // Adicionando os tanques à cena
-scene.add(tank1.object );
-scene.add(tank2.object );
+scene.add(tank1.object);
+scene.add(tank2.object);
 
 // Criando os bounding boxes dos tanques
 let bbTank1 = new THREE.Box3();
@@ -90,39 +87,20 @@ let bbHelper2 = createBBHelper(bbTank2, "white");
 scene.add(bbHelper1);
 scene.add(bbHelper2);
 
+// Função para criar a caixa de informações do tutorial
 buildTutorial();
 
-function buildTutorial() {
-  let controls = new InfoBox();
-  controls.add("Tanque 1");
-  controls.addParagraph();
-  controls.add("Mover");
-  controls.add("Esquerda/ Direita : A / D");
-  controls.add("Frente/ Trás : W / S");
-  controls.addParagraph();
-  controls.add("Atirar");
-  controls.add("Espaço ou Q");
-  controls.show();
-
-  let controls2 = new InfoBox2();
-  controls2.add("Tanque 2");
-  controls2.addParagraph();
-  controls2.add("Mover");
-  controls2.add("Esquerda/ Direita : Seta Esquerda / Seta Direita");
-  controls2.add("Frente/ Trás : Seta cima / Seta baixo");
-  controls2.addParagraph();
-  controls2.add("Atirar");
-  controls2.add("/ ou ,");
-  controls2.show();
-}
-
+// Inicializando os placares
 const placar1 = new SecondaryBoxTopEsquerda();
 const placar2 = new SecondaryBoxTopDireita();
-function mostraPlacar(){
+
+// Função para mostrar o placar
+function mostraPlacar() {
   placar1.changeMessage("Dano Tanque 1 (Vermelho) " + tank1.dano);
   placar2.changeMessage("Dano Tanque 2 (Azul) " + tank2.dano);
 }
 
+// Função para reiniciar o jogo
 function resetaJogo() {
   tank1.dano = 0;
   tank2.dano = 0;
@@ -130,21 +108,20 @@ function resetaJogo() {
 }
 
 function VerificaPlacar() {
-  if(tank1.dano >= 10){
-    alert("Tanque 2 (azul) venceu!")
+  if (tank1.dano >= 10) {
+    alert("Tanque 2 (azul) venceu!");
     resetaJogo();
   } else if (tank2.dano >= 10) {
-    alert("Tanque 1 (vermelho) venceu!")
+    alert("Tanque 1 (vermelho) venceu!");
     resetaJogo();
   }
 }
 
-
 function render() {
-  keyboardUpdateTank1(tank1 , bbTank1, tank2, bbTank2);
-  keyboardUpdateTank2(tank2 , bbTank2, tank1, bbTank1);
+  keyboardUpdateTank1(tank1, bbTank1, tank2, bbTank2);
+  keyboardUpdateTank2(tank2, bbTank2, tank1, bbTank1);
   checkCollisions(tank1.object, bbTank1, tank2.object, bbTank2, bbWalls);
-  updateCameraPosition(camera, tank1.object, tank2.object , orbitControlsEnabled);
+  updateCameraPosition(camera, tank1.object, tank2.object, orbitControlsEnabled);
 
   mostraPlacar();
   VerificaPlacar();
