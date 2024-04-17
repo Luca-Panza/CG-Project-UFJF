@@ -21,12 +21,12 @@ import { levels, scene, bbWalls } from "./constants/constants.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition; // Variável global para a posição anterior da câmera
 let orbitControlsEnabled = false; // Variável global para controlar se os controles orbitais estão ativados
-let currentLevelIndex = 0; // Index of the current level
+let currentLevelIndex = 0; // Index do nível atual
 
-renderer = initRenderer(); // Initialize a basic rendererInfoBox, InfoBox2,
-camera = initCamera(new THREE.Vector3(0, 15, 30)); // Initialize the camera at this position
-material = setDefaultMaterial(); // Create a default material
-light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
+renderer = initRenderer(); // Inicialização do renderizador
+camera = initCamera(new THREE.Vector3(0, 15, 30)); // Inicialização da câmera
+material = setDefaultMaterial(); // Criação de um material padrão
+light = initDefaultBasicLight(scene); // Criação de uma luz padrão
 orbit = new OrbitControls(camera, renderer.domElement); // Inicialização dos controles orbitais (inicialmente desativados)
 orbit.enabled = false; // Desativar os controles orbitais
 

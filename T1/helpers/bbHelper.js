@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
+// Função para criar um helper para a bounding box
 function createBBHelper(bb, color) {
-  // Create a bounding box helper
   let helper = new THREE.Box3Helper(bb, color);
   return helper;
 }
