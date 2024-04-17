@@ -7,7 +7,7 @@ export class Ball {
     this.moveOn = true;
     this.direction = direction;
     this.object = this.buildGeometry();
-    this.ballHasBeenHit = false; // usado para verificar se a bola atingiu o tank 
+    this.ballHasBeenHit = false; // usado para verificar se a bola atingiu o tank
     this.bbBall = new THREE.Box3();
     this.bbBall.setFromObject(this.object);
     this.object.previousPosition = this.object.position.clone();
@@ -43,9 +43,9 @@ export class Ball {
   }
   checkCollisionsTankInimigo() {
     if (this.bbTankInimigo.intersectsBox(this.bbBall)) {
-      if(!this.ballHasBeenHit){
+      if (!this.ballHasBeenHit) {
         this.tankInimigo.dano += 1;
-        this.ballHasBeenHit = true; // variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhao inimigo
+        this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhão inimigo
       }
       this.destroy();
     }
@@ -83,7 +83,6 @@ export class Ball {
   }
   buildGeometry() {
     let obj = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshPhongMaterial({ color: "white", shininess: "200" }));
-    // obj.position.set(0, 0, 0);
     obj.castShadow = true;
     return obj;
   }

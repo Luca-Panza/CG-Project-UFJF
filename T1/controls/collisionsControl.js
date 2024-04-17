@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 // Função que verifica colisões entre tanques
 function checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2) {
   let collision = bbTank1.intersectsBox(bbTank2); // Verifica se houve colisão
@@ -10,19 +12,20 @@ function checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2) {
   }
 }
 
-// Função que verifica colisões entre tanque e paredes
+// Função que verifica colisões entre tanques e paredes
 function checkCollisionsTankWall(tank, bbTank, bbWalls) {
   for (let i = 0; i < bbWalls.length; i++) {
-    // Itera sobre todas as bounding boxes das paredes
     const bbWall = bbWalls[i]; // Bounding box da parede atual
-    let collision = bbWall.intersectsBox(bbTank); // Verifica se houve colisão
-    if (collision) {
-      tank.position.copy(tank.previousPosition); // Restaura a posição do tanque
+    if (bbWall.intersectsBox(bbTank)) {
+      const normal = bbWall.normal; // Normal da parede com a qual houve colisão
+      const moveDirection = new THREE.Vector3().subVectors(tank.position, tank.previousPosition);
+      const adjustment = moveDirection.projectOnPlane(normal); // Projetar o vetor de movimento na direção perpendicular à normal
+
+      tank.position.copy(tank.previousPosition).add(adjustment); // Ajustar a posição com base na projeção
       bbTank.setFromObject(tank); // Atualiza o bounding box do tanque
     }
   }
 }
-
 function checkCollisions(tank1, bbTank1, tank2, bbTank2, bbWalls) {
   checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2);
   checkCollisionsTankWall(tank1, bbTank1, bbWalls);

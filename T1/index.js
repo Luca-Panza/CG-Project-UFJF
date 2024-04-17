@@ -1,3 +1,7 @@
+// Eduarda Araujo Carvalho - 202265022AC
+// Maria Clara Ribeiro de Menezes - 202165101AC
+// Luca Rodrigues Panza - 202465173A
+
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 import {
