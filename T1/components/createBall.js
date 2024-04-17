@@ -82,8 +82,8 @@ export class Ball {
     this.direction = direction.normalize();
   }
   buildGeometry() {
-    let obj = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), new THREE.MeshPhongMaterial({ color: "white", shininess: "200" }));
-    obj.position.set(0, 1, 0);
+    let obj = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshPhongMaterial({ color: "white", shininess: "200" }));
+    // obj.position.set(0, 0, 0);
     obj.castShadow = true;
     return obj;
   }

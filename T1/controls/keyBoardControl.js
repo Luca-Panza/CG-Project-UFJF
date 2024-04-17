@@ -40,7 +40,8 @@ function keyboardUpdateTank1(tank1, bbTank1, tankInimigo, bbTankInimigo) {
     direction.applyAxisAngle(axisY, Math.PI / 2);
     
     let ball = new Ball(direction, tankInimigo,  bbTankInimigo);
-    ball.object.position.copy(tank1.object.position);
+    // ball.object.position.copy(tank1.object.position);
+    ball.object.position.set(tank1.object.position.x, 3, tank1.object.position.z);
     ball.startMoving(true);
     ballsTank1.push(ball);
   }
@@ -72,7 +73,8 @@ function keyboardUpdateTank2(tank2, bbTank2, tankInimigo, bbTankInimigo) {
     direction.applyAxisAngle(axisY, Math.PI / 2);
     
     let ball = new Ball(direction, tankInimigo , bbTankInimigo);
-    ball.object.position.copy(tank2.object.position);
+    // ball.object.position.copy(tank2.object.position);
+    ball.object.position.set(tank2.object.position.x, 3, tank2.object.position.z);
     ball.startMoving(true);
     ballsTank2.push(ball);
   }
