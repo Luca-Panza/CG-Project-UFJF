@@ -1,20 +1,20 @@
 import * as THREE from "three";
 
-// Create the main scene
+// Criação da cena
 const scene = new THREE.Scene();
 
-// Tank movement and rotation constants
+// Constantes de movimento e rotação do tanque
 const moveDistance = 0.25;
 const rotateAngle = (Math.PI / 2) * 0.02;
 
-// Walls and bounding boxes
+// Paredes e caixas de colisão
 const walls = [];
 const bbWalls = [];
 
 const levels = [
-  // Arrays of levels
+  // Arrays de níveis
   [
-    // Level 1
+    // Nível 1
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
