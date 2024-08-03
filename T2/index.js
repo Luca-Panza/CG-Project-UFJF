@@ -20,7 +20,7 @@ import { buildTutorial } from "./controls/tutorialControl.js";
 import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
 import { createBBHelper } from "./helpers/bbHelper.js";
-import { levels, scene, bbWalls } from "./constants/constants.js";
+import { levels, scene, walls, bbWalls } from "./constants/constants.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -96,15 +96,72 @@ window.addEventListener("keydown", function (event) {
         }
     }
     else if(event.key === "1"){
-        currentLevelIndex = 0;
-        resetaJogo();
+        resetaJogo(0);
     }
     else if(event.key == "2"){
-        currentLevelIndex = 1;
-        resetaJogo();
-
+        resetaJogo(1);
     }
 });
+
+function clearPreviousLevel() {
+    // Remover paredes da cena
+    walls.forEach(wall => scene.remove(wall));
+    walls.length = 0; // Limpa a lista de paredes
+
+    // Remover bounding boxes da cena
+    bbWalls.forEach(bbWall => {
+        scene.remove(bbWall);
+    });
+    bbWalls.length = 0; // Limpa a lista de bounding boxes
+}
+
+function resetaJogo(currentLevelIndex) {
+    // Limpar cena
+    while (scene.children.length > 0) {
+        scene.remove(scene.children[0]);
+    }
+    clearPreviousLevel();
+    // Recriar o plano de fundo (ground plane)
+    updateGroundPlane();
+    
+
+    light = initDefaultBasicLight(scene);
+    
+
+    // Recriar o nível atual
+    createLevel(levels[currentLevelIndex], planeWidth / 2, planeHeight, scene);
+
+    // Recriar os tanques nas posições iniciais
+    if(currentLevelIndex === 0){
+        tank1 = new Tank(0xff0000, new THREE.Vector3(-20, 0, 15));
+        tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
+    }
+    else if(currentLevelIndex === 1){
+        tank1 = new Tank(0xff0000, new THREE.Vector3(-30, 0, 15));
+        tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
+    }
+    // Adicionar os tanques à cena
+    scene.add(tank1.object);
+    scene.add(tank2.object);
+
+    // Recriar os bounding boxes dos tanques
+    bbTank1 = new THREE.Box3().setFromObject(tank1.object);
+    bbTank2 = new THREE.Box3().setFromObject(tank2.object);
+
+    // Adicionar bounding boxes helpers à cena
+    bbHelper1 = createBBHelper(bbTank1, "white");
+    bbHelper2 = createBBHelper(bbTank2, "white");
+    scene.add(bbHelper1);
+    scene.add(bbHelper2);
+
+    // Recriar o placar
+    placar1.changeMessage("Dano Tanque 1 (Vermelho) 0");
+    placar2.changeMessage("Dano Tanque 2 (Azul) 0");
+
+    // Resetar dano dos tanques
+    tank1.dano = 0;
+    tank2.dano = 0;
+}
 
 // Criando o nível com as dimensões iniciais
 createLevel(levels[currentLevelIndex], planeWidth/2, planeHeight, scene);
@@ -139,12 +196,6 @@ const placar2 = new SecondaryBoxTopDireita();
 function mostraPlacar() {
     placar1.changeMessage("Dano Tanque 1 (Vermelho) " + tank1.dano);
     placar2.changeMessage("Dano Tanque 2 (Azul) " + tank2.dano);
-}
-
-function resetaJogo() {
-    tank1.dano = 0;
-    tank2.dano = 0;
-    location.reload();
 }
 
 function VerificaPlacar() {
