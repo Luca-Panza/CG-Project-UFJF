@@ -5,11 +5,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 import {
-  initRenderer,
-  initCamera,
-  initDefaultBasicLight,
-  setDefaultMaterial,
-  createGroundPlaneXZ,
+    initRenderer,
+    initCamera,
+    initDefaultBasicLight,
+    setDefaultMaterial,
+    createGroundPlaneXZ,
 } from "../libs/util/util.js";
 import { SecondaryBoxTopEsquerda, SecondaryBoxTopDireita } from "./util/util.js";
 
@@ -21,7 +21,7 @@ import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
 import { createBBHelper } from "./helpers/bbHelper.js";
 import { levels, scene, walls, bbWalls } from "./constants/constants.js";
-
+import { TankImport } from "./components/importTank.js";
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
 let currentLevelIndex = 0;
@@ -31,6 +31,7 @@ const initialHeight = 60;
 
 let planeWidth = initialWidth;
 let planeHeight = initialHeight;
+
 
 function init() {
     renderer = initRenderer();
@@ -95,10 +96,10 @@ window.addEventListener("keydown", function (event) {
             camera.position.copy(prevCameraPosition);
         }
     }
-    else if(event.key === "1"){
+    else if (event.key === "1") {
         resetaJogo(0);
     }
-    else if(event.key == "2"){
+    else if (event.key == "2") {
         resetaJogo(1);
     }
 });
@@ -123,22 +124,23 @@ function resetaJogo(currentLevelIndex) {
     clearPreviousLevel();
     // Recriar o plano de fundo (ground plane)
     updateGroundPlane();
-    
+
 
     light = initDefaultBasicLight(scene);
-    
+
 
     // Recriar o nível atual
     createLevel(levels[currentLevelIndex], planeWidth / 2, planeHeight, scene);
 
     // Recriar os tanques nas posições iniciais
-    if(currentLevelIndex === 0){
-        tank1 = new Tank(0xff0000, new THREE.Vector3(-20, 0, 15));
-        tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
+    if (currentLevelIndex === 0) {
+        //Adicionar o tanque na posição (-20, 0, -15)
+        //Adicionar o tanque na posição (20, 0, -15)
     }
-    else if(currentLevelIndex === 1){
-        tank1 = new Tank(0xff0000, new THREE.Vector3(-30, 0, 15));
-        tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
+    else if (currentLevelIndex === 1) {
+        //Adicionar o tanque na posição (-30, 0, -15)
+        //Adicionar o tanque na posição (30, 0, -15)
+        //Adicionar o tanque na posição (30, 0, 15)
     }
     // Adicionar os tanques à cena
     scene.add(tank1.object);
@@ -164,7 +166,10 @@ function resetaJogo(currentLevelIndex) {
 }
 
 // Criando o nível com as dimensões iniciais
-createLevel(levels[currentLevelIndex], planeWidth/2, planeHeight, scene);
+createLevel(levels[currentLevelIndex], planeWidth / 2, planeHeight, scene);
+
+//Exemplo de criar o tanque importado
+let tank = new TankImport(0xff0000, new THREE.Vector3(0, 0, 0), Math.PI)
 
 // Criando os tanques
 let tank1 = new Tank(0xff0000, new THREE.Vector3(-20, 0, 15));
@@ -173,6 +178,21 @@ let tank2 = new Tank(0x4169e1, new THREE.Vector3(20, 0, 15));
 // Adicionando os tanques à cena
 scene.add(tank1.object);
 scene.add(tank2.object);
+
+//Adicionando o tanque na cena
+tank.loadTank().then(tankObject => {
+    tankObject.position.copy(new THREE.Vector3(0, 0, 0)); // Define a posição do tanque
+    tankObject.rotation.y = Math.PI; // Define a rotação do tanque
+    tankObject.traverse(child => {
+        if (child.isMesh) {
+            child.material.color.setHex(0xff0000); // Ajusta a cor do tanque
+        }
+    });
+    scene.add(tankObject);
+    console.log('Tanque adicionado à cena:', tankObject);
+}).catch(error => {
+    console.error('Erro ao adicionar o tanque à cena:', error);
+});
 
 // Criando os bounding boxes dos tanques
 let bbTank1 = new THREE.Box3();
