@@ -1,5 +1,8 @@
 import * as THREE from "three";
 
+// Índice do nível atual
+let currentLevelIndex = 0;
+
 // Criação da cena
 const scene = new THREE.Scene();
 
@@ -45,4 +48,4 @@ const levels = [
   ],
 ];
 
-export { moveDistance, rotateAngle, levels, scene, walls, bbWalls };
+export { moveDistance, rotateAngle, levels, scene, walls, bbWalls, currentLevelIndex };

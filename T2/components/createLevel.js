@@ -1,10 +1,11 @@
 import * as THREE from "three";
 
-import { bbWalls, walls } from "../constants/constants.js";
+import { bbWalls, walls, currentLevelIndex } from "../constants/constants.js";
 
 function createLevel(levelData, planeWidth, planeHeight, scene) {
   const wallGeometry = new THREE.BoxGeometry(5, 5, 5);
-  const wallMaterial = new THREE.MeshBasicMaterial({ color: "grey" });
+  let wallMaterial =
+    currentLevelIndex === 1 ? new THREE.MeshBasicMaterial({ color: "grey" }) : new THREE.MeshLambertMaterial({ color: "grey" });
   const edgeMaterial = new THREE.LineBasicMaterial({ color: "white", linewidth: 3 });
 
   const blockSize = 5;
