@@ -21,6 +21,7 @@ import { levels, scene, walls, bbWalls } from "./constants/constants.js";
 import { TankImport } from "./components/importTank.js";
 import { createLampposts } from "./components/importLamp.js";
 import { createLightsForLevel1 } from "./components/createLight.js";
+import { ProgressBar } from "./components/barraDeVida.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -110,9 +111,14 @@ function createTank(color, position, rotation) {
 
       bbTank.setFromObject(tankObject);
       bbHelper = createBBHelper(bbTank, "white");
-      scene.add(bbHelper);
+      // scene.add(bbHelper);
 
-      return { tank, bbTank, bbHelper };
+      //  Criando a barra de progresso
+      let pbarTank = new ProgressBar(tank.vida);
+      pbarTank.position.set(0, 6);
+      tankObject.add(pbarTank);
+
+      return { tank, bbTank, bbHelper, pbarTank };
     })
     .catch((error) => {
       console.error(`Erro ao adicionar o tanque à cena: ${error}`);
@@ -163,11 +169,9 @@ function resetaJogo(index) {
   Promise.all(tankPromises).then((results) => {
     // Atribuir os tanques globais
     [tank1, tank2, tank3] = results;
-    placar1.changeMessage("Dano Tanque 1 (Vermelho) 0");
-    placar2.changeMessage("Dano Tanque 2 (Azul) 0");
-    if (tank1) tank1.tank.dano = 0;
-    if (tank2) tank2.tank.dano = 0;
-    if (tank3) tank3.tank.dano = 0;
+    if (tank1) tank1.tank.vida = 10;
+    if (tank2) tank2.tank.vida = 10;
+    if (tank3) tank3.tank.vida = 10;
   });
 }
 
@@ -206,55 +210,61 @@ function mostraPlacar() {
   if (index === 0) {
     if (tank1) {
       placar1.changeMessage(
-        "Dano Tanque 1 (Vermelho) " + (tank1.tank.dano || 0)
+        "vida Tanque 1 (Vermelho) " + (tank1.tank.vida || 0)
       );
     }
     if (tank2) {
-      placar2.changeMessage("Dano Tanque 2 (Azul) " + (tank2.tank.dano || 0));
+      placar2.changeMessage("vida Tanque 2 (Azul) " + (tank2.tank.vida || 0));
     }
   } else if (index === 1) {
     if (tank1) {
       placar1.changeMessage(
-        "Dano Tanque 1 (Vermelho) " + (tank1.tank.dano || 0)
+        "vida Tanque 1 (Vermelho) " + (tank1.tank.vida || 0)
       );
     }
     if (tank2) {
-      placar2.changeMessage("Dano Tanque 2 (Azul) " + (tank2.tank.dano || 0));
+      placar2.changeMessage("vida Tanque 2 (Azul) " + (tank2.tank.vida || 0));
     }
   }
 }
 
+function atualizaBarraDeVida() {
+  if (tank1) tank1.pbarTank.updateProgress(tank1.tank.vida);
+  if (tank2) tank2.pbarTank.updateProgress(tank2.tank.vida);
+  if (tank3) tank3.pbarTank.updateProgress(tank3.tank.vida);
+}
+
 function verificaPlacar() {
   if (index === 0) {
-    if (tank1.tank.dano >= 10) {
-      if (tank1) tank1.tank.dano = 0;
-      if (tank2) tank2.tank.dano = 0;
+    if (tank1.tank.vida <= 0) {
+      if (tank1) tank1.tank.vida = 10;
+      if (tank2) tank2.tank.vida = 10;
       alert("Tanque 2 (azul) venceu!");
       resetaJogo(currentLevelIndex);
-    } else if (tank2.tank.dano >= 10) {
-      if (tank1) tank1.tank.dano = 0;
-      if (tank2) tank2.tank.dano = 0;
+    } else if (tank2.tank.vida <= 0) {
+      if (tank1) tank1.tank.vida = 10;
+      if (tank2) tank2.tank.vida = 10;
       alert("Tanque 1 (vermelho) venceu!");
       resetaJogo(currentLevelIndex);
     }
   } else if (index === 1) {
     // essa lógica aqui deve ser revista para verificar como fazer os vencedores do nível 2 com 3 jogadores
-    if (tank1.tank.dano >= 10) {
-      if (tank1) tank1.tank.dano = 0;
-      if (tank2) tank2.tank.dano = 0;
-      if (tank3) tank3.tank.dano = 0;
+    if (tank1.tank.vida <= 0) {
+      if (tank1) tank1.tank.vida = 10;
+      if (tank2) tank2.tank.vida = 10;
+      if (tank3) tank3.tank.vida = 10;
       alert("Tanque 2 (azul) venceu!");
       resetaJogo(currentLevelIndex);
-    } else if (tank2.tank.dano >= 10) {
-      if (tank1) tank1.tank.dano = 0;
-      if (tank2) tank2.tank.dano = 0;
-      if (tank3) tank3.tank.dano = 0;
+    } else if (tank2.tank.vida <= 0) {
+      if (tank1) tank1.tank.vida = 10;
+      if (tank2) tank2.tank.vida = 10;
+      if (tank3) tank3.tank.vida = 10;
       alert("Tanque 1 (vermelho) venceu!");
       resetaJogo(currentLevelIndex);
-    } else if (tank3.tank.dano >= 10) {
-      if (tank1) tank1.tank.dano = 0;
-      if (tank2) tank2.tank.dano = 0;
-      if (tank3) tank3.tank.dano = 0;
+    } else if (tank3.tank.vida <= 0) {
+      if (tank1) tank1.tank.vida = 10;
+      if (tank2) tank2.tank.vida = 10;
+      if (tank3) tank3.tank.vida = 10;
       alert("Tanque 3 (verde) venceu!");
       resetaJogo(currentLevelIndex);
     }
@@ -297,6 +307,7 @@ function render() {
 
       mostraPlacar();
       verificaPlacar();
+      atualizaBarraDeVida();
     }
   } else if (index === 1) {
     if (tank1 && tank2 && tank3) {
@@ -330,6 +341,7 @@ function render() {
 
       mostraPlacar();
       verificaPlacar();
+      atualizaBarraDeVida();
     }
   }
 }
