@@ -58,6 +58,7 @@ function updateCameraAspect() {
 }
 
 function updateGroundPlane() {
+  // verificar se o cenário estpá centralizado na posição 00
   const oldPlane = scene.getObjectByName("groundPlane");
   if (oldPlane) scene.remove(oldPlane);
 
@@ -106,14 +107,14 @@ function createTank(color, position, rotation) {
       scene.add(tankObject);
       loadedTank = tankObject;
 
-      bbTank.setFromObject(tankObject);
-      bbHelper = createBBHelper(bbTank, "white");
-      // scene.add(bbHelper);
-
       //  Criando a barra de progresso
       let pbarTank = new ProgressBar(tank.vida);
       pbarTank.position.set(0, 6);
       tankObject.add(pbarTank);
+
+      bbTank.setFromObject(tankObject);
+      bbHelper = createBBHelper(bbTank, "white");
+      scene.add(bbHelper);
 
       return { tank, bbTank, bbHelper, pbarTank };
     })
@@ -161,6 +162,47 @@ function resetaJogo(index) {
 
     // Criação de postes de luz
     createLampposts(scene);
+
+    // let sphereMesh = new THREE.Mesh(new THREE.SphereGeometry(1.75, 20, 20));
+    // sphereMesh.position.set(0, 2, 0);
+    // scene.add(sphereMesh);
+
+    // let cylinderMesh = new THREE.Mesh(
+    //   new THREE.CylinderGeometry(0.85, 0.85, 2, 20)
+    // );
+    // cylinderMesh.position(0, 10, 0);
+    // scene.add(cylinderMesh);
+
+    // let cylinderMesh = new THREE.Mesh(
+    //   new THREE.CylinderGeometry(0.4, 0.4, 2, 20)
+    // );
+    // cylinderMesh.position.set(0, 2, 0);
+    // scene.add(cylinderMesh);
+
+    // const cannonGeometry = new THREE.CylinderGeometry(0.75, 0.75, 5);
+    // const cannonMaterial = new THREE.MeshBasicMaterial({ color: 0x505050 });
+    // let canhao = new THREE.Mesh(cannonGeometry, cannonMaterial);
+    // canhao.position.set(0, 1.5, 0.0);
+    // canhao.rotateZ(Math.PI / 2); // Rotação para que o canhão fique na vertical
+    // // cylinderMesh.add(canhao);
+
+    // const cannonGeometry2 = new THREE.CylinderGeometry(0.2, 0.2, 5);
+    // const cannonMaterial2 = new THREE.MeshBasicMaterial({ color: 0x505050 });
+    // let canhao2 = new THREE.Mesh(cannonGeometry2, cannonMaterial2);
+    // canhao2.position.set(0, 1.5, 0.0);
+    // canhao2.rotateZ(Math.PI / 2); // Rotação para que o canhão fique na vertical
+    // canhao2.matrixAutoUpdate = false;
+    // canhao2.updateMatrix();
+
+    // let auxMat = new THREE.Matrix4();
+
+    // let furo = CSG.fromMesh(canhao2);
+    // let canhao1 = CSG.fromMesh(canhao);
+    // let canhaoFurado = canhao1.subtract(furo); // Execute subtraction
+    // mesh1 = CSG.toMesh(canhaoFurado, auxMat);
+    // mesh1.material = new THREE.MeshPhongMaterial({ color: "lightgreen" });
+    // mesh1.position.set(0, 1.5, 0.0);
+    // cylinderMesh.add(mesh1);
   }
 
   Promise.all(tankPromises).then((results) => {
