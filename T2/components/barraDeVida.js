@@ -26,9 +26,19 @@ export class ProgressBar extends THREE.Sprite {
 
           void main() {
             float normalizedProgress = (progress - min) / (max - min);
-            vec3 backColor = mix(vec3(0), vec3(0, 0.5, 0), normalizedProgress);
+            
+            // Definição de cores
+            vec3 color;
+            if (normalizedProgress > 0.7) {
+              color = mix(vec3(1, 1, 0), vec3(0, 1, 0), (normalizedProgress - 0.7) / 0.3); // Verde a Amarelo
+            } else if (normalizedProgress > 0.4) {
+              color = mix(vec3(1, 0, 0), vec3(1, 1, 0), (normalizedProgress - 0.4) / 0.3); // Amarelo a Vermelho
+            } else {
+              color = vec3(1, 0, 0); // Vermelho
+            }
+
             float pb = step(normalizedProgress, vUv.x);
-            gl_FragColor = vec4(mix(vec3(0, 1, 0), backColor, pb), 1.0);
+            gl_FragColor = vec4(mix(color, vec3(0), pb), 1.0);
           }
         `;
       },
