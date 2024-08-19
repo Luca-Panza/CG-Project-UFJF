@@ -1,12 +1,18 @@
 import * as THREE from "three";
 
-import { bbWalls, walls, currentLevelIndex } from "../constants/constants.js";
+import { bbWalls, walls } from "../constants/constants.js";
+let wallMaterial;
 
-function createLevel(levelData, planeWidth, planeHeight, scene) {
+function createLevel(levelData, planeWidth, planeHeight, scene, index) {
   const wallGeometry = new THREE.BoxGeometry(5, 5, 5);
-  let wallMaterial =
-    currentLevelIndex === 1 ? new THREE.MeshBasicMaterial({ color: "grey" }) : new THREE.MeshLambertMaterial({ color: "grey" });
-  const edgeMaterial = new THREE.LineBasicMaterial({ color: "white", linewidth: 3 });
+  wallMaterial =
+    index === 0
+      ? new THREE.MeshBasicMaterial({ color: "grey" })
+      : new THREE.MeshLambertMaterial({ color: "grey" });
+  const edgeMaterial = new THREE.LineBasicMaterial({
+    color: "white",
+    linewidth: 3,
+  });
 
   const blockSize = 5;
   const offsetX = -(planeWidth / 2 - blockSize / 2);

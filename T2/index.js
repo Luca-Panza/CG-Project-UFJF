@@ -137,7 +137,7 @@ function resetaJogo(index) {
   updateGroundPlane();
   light = initDefaultBasicLight(scene);
 
-  createLevel(levels[index], planeWidth / 2, planeHeight, scene);
+  createLevel(levels[index], planeWidth / 2, planeHeight, scene, index);
 
   let tankPromises = [];
   if (index === 0) {
