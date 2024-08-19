@@ -8,7 +8,7 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
   wallMaterial =
     index === 0
       ? new THREE.MeshBasicMaterial({ color: "grey" })
-      : new THREE.MeshLambertMaterial({ color: "grey" });
+      : new THREE.MeshLambertMaterial({ color: "green" });
   const edgeMaterial = new THREE.LineBasicMaterial({
     color: "white",
     linewidth: 3,
