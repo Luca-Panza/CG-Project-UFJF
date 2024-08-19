@@ -5,24 +5,15 @@ function buildTutorial() {
   let controls = new InfoBox();
   controls.add("Tanque 1");
   controls.addParagraph();
-  controls.add("Mover");
-  controls.add("Esquerda/ Direita : A / D");
-  controls.add("Frente/ Trás : W / S");
+  controls.add("MOVER");
+  controls.add("Esquerda: A / Seta Esquerda");
+  controls.add("Direita : D / Seta Direita");
+  controls.add("Frente: W / Seta cima");
+  controls.add("Trás : S / Seta baixo");
   controls.addParagraph();
-  controls.add("Atirar");
-  controls.add("Espaço ou Q");
+  controls.add("ATIRAR");
+  controls.add("Espaço");
   controls.show();
-
-  let controls2 = new InfoBox2();
-  controls2.add("Tanque 2");
-  controls2.addParagraph();
-  controls2.add("Mover");
-  controls2.add("Esquerda/ Direita : Seta Esquerda / Seta Direita");
-  controls2.add("Frente/ Trás : Seta cima / Seta baixo");
-  controls2.addParagraph();
-  controls2.add("Atirar");
-  controls2.add("/ ou ,");
-  controls2.show();
 }
 
 export { buildTutorial };

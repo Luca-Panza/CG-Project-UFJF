@@ -208,30 +208,6 @@ const tituloNivel = new SecondaryBoxTopEsquerda();
 function mostraNivel() {
   tituloNivel.changeMessage("Nível " + (index + 1));
 }
-// const placar2 = new SecondaryBoxTopDireita();
-
-// essa função não vai ser mais utilizada
-// function mostraPlacar() {
-//   if (index === 0) {
-//     if (tank1) {
-//       placar1.changeMessage(
-//         "vida Tanque 1 (Vermelho) " + (tank1.tank.vida || 0)
-//       );
-//     }
-//     if (tank2) {
-//       placar2.changeMessage("vida Tanque 2 (Azul) " + (tank2.tank.vida || 0));
-//     }
-//   } else if (index === 1) {
-//     if (tank1) {
-//       placar1.changeMessage(
-//         "vida Tanque 1 (Vermelho) " + (tank1.tank.vida || 0)
-//       );
-//     }
-//     if (tank2) {
-//       placar2.changeMessage("vida Tanque 2 (Azul) " + (tank2.tank.vida || 0));
-//     }
-//   }
-// }
 
 function atualizaBarraDeVida() {
   if (tank1) tank1.pbarTank.updateProgress(tank1.tank.vida);
