@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { scene, bbWalls } from "../constants/constants.js";
 //-- Ball Class -----------------------------------------------------------
 export class Ball {
-  constructor(direction, tankInimigo, bbTankInimigo) {
+  constructor(direction, tankInimigo, bbTankInimigo, index) {
     this.speed = 0.5;
     this.moveOn = true;
     this.direction = direction;
@@ -15,6 +15,7 @@ export class Ball {
     //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
     this.tankInimigo = tankInimigo;
     this.bbTankInimigo = bbTankInimigo;
+    this.index = index;
     scene.add(this.bbHelper1);
     scene.add(this.object);
   }
@@ -39,12 +40,22 @@ export class Ball {
     this.bbBall.setFromObject(this.object);
 
     this.checkCollisions();
-    this.checkCollisionsTankInimigo();
+    if (this.index == 0) {
+      this.checkCollisionsTankInimigo(this.tankInimigo, this.bbTankInimigo);
+    } else {
+      if (Array.isArray(this.tankInimigo)) {
+        // Se houver vários inimigos, veridicar colisão para cada um
+        this.tankInimigo.forEach((tank, idx) => {
+          const bb = this.bbTankInimigo[idx];
+          this.checkCollisionsTankInimigo(tank, bb);
+        });
+      }
+    }
   }
-  checkCollisionsTankInimigo() {
-    if (this.bbTankInimigo.intersectsBox(this.bbBall)) {
+  checkCollisionsTankInimigo(tankInimigo, bbTankInimigo) {
+    if (bbTankInimigo.intersectsBox(this.bbBall)) {
       if (!this.ballHasBeenHit) {
-        this.tankInimigo.dano += 1;
+        tankInimigo.dano += 1;
         this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhão inimigo
       }
       this.destroy();
@@ -82,7 +93,10 @@ export class Ball {
     this.direction = direction.normalize();
   }
   buildGeometry() {
-    let obj = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), new THREE.MeshPhongMaterial({ color: "white", shininess: "200" }));
+    let obj = new THREE.Mesh(
+      new THREE.SphereGeometry(0.3, 32, 32),
+      new THREE.MeshPhongMaterial({ color: "white", shininess: "200" })
+    );
     obj.castShadow = true;
     return obj;
   }

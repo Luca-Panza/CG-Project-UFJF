@@ -51,30 +51,14 @@ function keyboardUpdateTank1(
       targetBoundingBox = [bbTankInimigo2, bbTankInimigo3];
     }
 
-    if (Array.isArray(targetTank)) {
-      // Se houver vários inimigos, dispare para cada um
-      targetTank.forEach((tank, idx) => {
-        const bb = targetBoundingBox[idx];
-        const ball = new Ball(direction, tank, bb);
-        ball.object.position.set(
-          tank1.object.position.x,
-          3,
-          tank1.object.position.z
-        );
-        ball.startMoving(true);
-        ballsTank1.push(ball);
-      });
-    } else {
-      // Apenas um inimigo
-      const ball = new Ball(direction, targetTank, targetBoundingBox);
-      ball.object.position.set(
-        tank1.object.position.x,
-        3,
-        tank1.object.position.z
-      );
-      ball.startMoving(true);
-      ballsTank1.push(ball);
-    }
+    const ball = new Ball(direction, targetTank, targetBoundingBox, index);
+    ball.object.position.set(
+      tank1.object.position.x,
+      3,
+      tank1.object.position.z
+    );
+    ball.startMoving(true);
+    ballsTank1.push(ball);
   }
 
   ballsTank1.forEach((ball) => ball.move());
