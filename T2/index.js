@@ -1,15 +1,18 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 import {
-    initRenderer,
-    initCamera,
-    initDefaultBasicLight,
-    setDefaultMaterial,
-    createGroundPlaneXZ,
+  initRenderer,
+  initCamera,
+  initDefaultBasicLight,
+  setDefaultMaterial,
+  createGroundPlaneXZ,
 } from "../libs/util/util.js";
-import { SecondaryBoxTopEsquerda, SecondaryBoxTopDireita } from "./util/util.js";
+import {
+  SecondaryBoxTopEsquerda,
+  SecondaryBoxTopDireita,
+} from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
-import { keyboardUpdateTank1} from "./controls/keyBoardControl.js";
+import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
 import { buildTutorial } from "./controls/tutorialControl.js";
 import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
@@ -33,144 +36,163 @@ let index = 0;
 let tank1, tank2, tank3;
 
 function init() {
-    renderer = initRenderer();
-    camera = initCamera(new THREE.Vector3(0, 15, 30));
-    material = setDefaultMaterial();
-    light = initDefaultBasicLight(scene);
-    orbit = new OrbitControls(camera, renderer.domElement);
-    orbit.enabled = false;
+  renderer = initRenderer();
+  camera = initCamera(new THREE.Vector3(0, 15, 30));
+  material = setDefaultMaterial();
+  light = initDefaultBasicLight(scene);
+  orbit = new OrbitControls(camera, renderer.domElement);
+  orbit.enabled = false;
 
-    updateRendererSize();
-    updateCameraAspect();
-    updateGroundPlane();
+  updateRendererSize();
+  updateCameraAspect();
+  updateGroundPlane();
 }
 
 function updateRendererSize() {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
 }
 
 function updateCameraAspect() {
-    const aspect = window.innerWidth / window.innerHeight;
-    camera.aspect = aspect;
-    camera.updateProjectionMatrix();
+  const aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = aspect;
+  camera.updateProjectionMatrix();
 }
 
 function updateGroundPlane() {
-    const oldPlane = scene.getObjectByName('groundPlane');
-    if (oldPlane) scene.remove(oldPlane);
+  const oldPlane = scene.getObjectByName("groundPlane");
+  if (oldPlane) scene.remove(oldPlane);
 
-    planeWidth = Math.max(initialWidth * (window.innerWidth / window.innerHeight), initialWidth);
-    planeHeight = Math.max(initialHeight, initialHeight * (window.innerHeight / window.innerWidth));
+  planeWidth = Math.max(
+    initialWidth * (window.innerWidth / window.innerHeight),
+    initialWidth
+  );
+  planeHeight = Math.max(
+    initialHeight,
+    initialHeight * (window.innerHeight / window.innerWidth)
+  );
 
-    const plane = createGroundPlaneXZ(planeWidth, planeHeight);
-    plane.name = 'groundPlane';
-    scene.add(plane);
+  const plane = createGroundPlaneXZ(planeWidth, planeHeight);
+  plane.name = "groundPlane";
+  scene.add(plane);
 }
 
 function onWindowResize() {
-    updateRendererSize();
-    updateCameraAspect();
-    updateGroundPlane();
+  updateRendererSize();
+  updateCameraAspect();
+  updateGroundPlane();
 }
 
 function createTank(color, position, rotation) {
-    const tank = new TankImport(color, position, rotation);
-    let loadedTank = null;
-    let bbTank = new THREE.Box3();
-    let bbHelper;
+  const tank = new TankImport(color, position, rotation);
+  let loadedTank = null;
+  let bbTank = new THREE.Box3();
+  let bbHelper;
 
-    return tank.loadTank().then(tankObject => {
-        tankObject.position.copy(position);
-        tankObject.rotation.y = rotation;
-        tankObject.traverse(child => {
-            if (child.isMesh) {
-                child.material = new THREE.MeshPhongMaterial({
-                    color,
-                    specular: 0x555555,
-                    shininess: 30,
-                });
-            }
-        });
+  return tank
+    .loadTank()
+    .then((tankObject) => {
+      tankObject.position.copy(position);
+      tankObject.rotation.y = rotation;
+      tankObject.traverse((child) => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshPhongMaterial({
+            color,
+            specular: 0x555555,
+            shininess: 30,
+          });
+        }
+      });
 
-        tank.object = tankObject;
-        scene.add(tankObject);
-        loadedTank = tankObject;
+      tank.object = tankObject;
+      scene.add(tankObject);
+      loadedTank = tankObject;
 
-        bbTank.setFromObject(tankObject);
-        bbHelper = createBBHelper(bbTank, "white");
-        scene.add(bbHelper);
+      bbTank.setFromObject(tankObject);
+      bbHelper = createBBHelper(bbTank, "white");
+      scene.add(bbHelper);
 
-        return { tank, bbTank, bbHelper };
-    }).catch(error => {
-        console.error(`Erro ao adicionar o tanque à cena: ${error}`);
+      return { tank, bbTank, bbHelper };
+    })
+    .catch((error) => {
+      console.error(`Erro ao adicionar o tanque à cena: ${error}`);
     });
 }
 
 function clearPreviousLevel() {
-    walls.forEach(wall => scene.remove(wall));
-    walls.length = 0;
-    bbWalls.forEach(bbWall => scene.remove(bbWall));
-    bbWalls.length = 0;
+  walls.forEach((wall) => scene.remove(wall));
+  walls.length = 0;
+  bbWalls.forEach((bbWall) => scene.remove(bbWall));
+  bbWalls.length = 0;
 }
 
 function resetaJogo(index) {
-    while (scene.children.length > 0) {
-        scene.remove(scene.children[0]);
-    }
-    clearPreviousLevel();
-    updateGroundPlane();
-    light = initDefaultBasicLight(scene);
+  while (scene.children.length > 0) {
+    scene.remove(scene.children[0]);
+  }
+  clearPreviousLevel();
+  updateGroundPlane();
+  light = initDefaultBasicLight(scene);
 
-    createLevel(levels[index], planeWidth / 2, planeHeight, scene);
+  createLevel(levels[index], planeWidth / 2, planeHeight, scene);
 
-    let tankPromises = [];
-    if (index === 0) {
-        tankPromises.push(createTank(0xff0000, new THREE.Vector3(-20, 0, 15), Math.PI));
-        tankPromises.push(createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI));
-    } else if (index === 1) {
-        tankPromises.push(createTank(0xff0000, new THREE.Vector3(-30, 0, -15), Math.PI / 360));
-        tankPromises.push(createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360));
-        tankPromises.push(createTank(0x00ff00, new THREE.Vector3(30, 0, 15), Math.PI));
-        createLightsForLevel1(scene, renderer);
+  let tankPromises = [];
+  if (index === 0) {
+    tankPromises.push(
+      createTank(0xff0000, new THREE.Vector3(-20, 0, 15), Math.PI)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI)
+    );
+  } else if (index === 1) {
+    tankPromises.push(
+      createTank(0xff0000, new THREE.Vector3(-30, 0, -15), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0x00ff00, new THREE.Vector3(30, 0, 15), Math.PI)
+    );
+    createLightsForLevel1(scene, renderer);
 
-        // Criação de postes de luz
-        createLampposts(scene);
-    }
+    // Criação de postes de luz
+    createLampposts(scene);
+  }
 
-    Promise.all(tankPromises).then(results => {
-        // Atribuir os tanques globais
-        [tank1, tank2, tank3] = results;
-        placar1.changeMessage("Dano Tanque 1 (Vermelho) 0");
-        placar2.changeMessage("Dano Tanque 2 (Azul) 0");
-        if (tank1) tank1.tank.dano = 0;
-        if (tank2) tank2.tank.dano = 0;
-        if (tank3) tank3.tank.dano = 0;
-    });
+  Promise.all(tankPromises).then((results) => {
+    // Atribuir os tanques globais
+    [tank1, tank2, tank3] = results;
+    placar1.changeMessage("Dano Tanque 1 (Vermelho) 0");
+    placar2.changeMessage("Dano Tanque 2 (Azul) 0");
+    if (tank1) tank1.tank.dano = 0;
+    if (tank2) tank2.tank.dano = 0;
+    if (tank3) tank3.tank.dano = 0;
+  });
 }
 
 init();
 
 window.addEventListener("resize", onWindowResize, false);
 
-window.addEventListener("keydown", event => {
-    if (event.key === "o") {
-        orbitControlsEnabled = !orbitControlsEnabled;
-        orbit.enabled = orbitControlsEnabled;
-        if (!orbitControlsEnabled) {
-            camera.position.copy(prevCameraPosition);
-        } else {
-            prevCameraPosition = camera.position.clone();
-        }
-    } else if (event.key === "1") {
-        index = 0;
-        currentLevelIndex = 0; // Atualiza o índice do nível atual
-        resetaJogo(index);
-    } else if (event.key === "2") {
-        index = 1;
-        currentLevelIndex = 1; // Atualiza o índice do nível atual
-        resetaJogo(index);
+window.addEventListener("keydown", (event) => {
+  if (event.key === "o") {
+    orbitControlsEnabled = !orbitControlsEnabled;
+    orbit.enabled = orbitControlsEnabled;
+    if (!orbitControlsEnabled) {
+      camera.position.copy(prevCameraPosition);
+    } else {
+      prevCameraPosition = camera.position.clone();
     }
+  } else if (event.key === "1") {
+    index = 0;
+    currentLevelIndex = 0; // Atualiza o índice do nível atual
+    resetaJogo(index);
+  } else if (event.key === "2") {
+    index = 1;
+    currentLevelIndex = 1; // Atualiza o índice do nível atual
+    resetaJogo(index);
+  }
 });
 
 resetaJogo(index);
@@ -180,76 +202,136 @@ buildTutorial();
 const placar1 = new SecondaryBoxTopEsquerda();
 const placar2 = new SecondaryBoxTopDireita();
 
-
 function mostraPlacar() {
-    if (index === 0) {
-        if (tank1) {
-            placar1.changeMessage("Dano Tanque 1 (Vermelho) " + (tank1.tank.dano || 0));
-        }
-        if (tank2) {
-            placar2.changeMessage("Dano Tanque 2 (Azul) " + (tank2.tank.dano || 0));
-        }
+  if (index === 0) {
+    if (tank1) {
+      placar1.changeMessage(
+        "Dano Tanque 1 (Vermelho) " + (tank1.tank.dano || 0)
+      );
     }
-    else if (index === 1) {
-        if (tank1) {
-            placar1.changeMessage("Dano Tanque 1 (Vermelho) " + (tank1.tank.dano || 0));
-        }
-        if (tank2) {
-            placar2.changeMessage("Dano Tanque 2 (Azul) " + (tank2.tank.dano || 0));
-        }
+    if (tank2) {
+      placar2.changeMessage("Dano Tanque 2 (Azul) " + (tank2.tank.dano || 0));
     }
+  } else if (index === 1) {
+    if (tank1) {
+      placar1.changeMessage(
+        "Dano Tanque 1 (Vermelho) " + (tank1.tank.dano || 0)
+      );
+    }
+    if (tank2) {
+      placar2.changeMessage("Dano Tanque 2 (Azul) " + (tank2.tank.dano || 0));
+    }
+  }
 }
 
 function verificaPlacar() {
-    if (index === 0) {
-        if (tank1.tank.dano >= 10) {
-            alert("Tanque 2 (azul) venceu!");
-            resetaJogo(currentLevelIndex);
-        } else if (tank2.tank.dano >= 10) {
-            alert("Tanque 1 (vermelho) venceu!");
-            resetaJogo(currentLevelIndex);
-        }
+  if (index === 0) {
+    if (tank1.tank.dano >= 10) {
+      if (tank1) tank1.tank.dano = 0;
+      if (tank2) tank2.tank.dano = 0;
+      alert("Tanque 2 (azul) venceu!");
+      resetaJogo(currentLevelIndex);
+    } else if (tank2.tank.dano >= 10) {
+      if (tank1) tank1.tank.dano = 0;
+      if (tank2) tank2.tank.dano = 0;
+      alert("Tanque 1 (vermelho) venceu!");
+      resetaJogo(currentLevelIndex);
     }
-    else if (index === 1) {
-        if (tank1.tank.dano >= 10) {
-            alert("Tanque 2 (azul) venceu!");
-            resetaJogo(currentLevelIndex);
-        } else if (tank2.tank.dano >= 10) {
-            alert("Tanque 1 (vermelho) venceu!");
-            resetaJogo(currentLevelIndex);
-        }
-        else if (tank3.tank.dano >= 10) {
-            alert("Tanque 3 (verde) venceu!");
-            resetaJogo(currentLevelIndex);
-        }
+  } else if (index === 1) {
+    // essa lógica aqui deve ser revista para verificar como fazer os vencedores do nível 2 com 3 jogadores
+    if (tank1.tank.dano >= 10) {
+      if (tank1) tank1.tank.dano = 0;
+      if (tank2) tank2.tank.dano = 0;
+      if (tank3) tank3.tank.dano = 0;
+      alert("Tanque 2 (azul) venceu!");
+      resetaJogo(currentLevelIndex);
+    } else if (tank2.tank.dano >= 10) {
+      if (tank1) tank1.tank.dano = 0;
+      if (tank2) tank2.tank.dano = 0;
+      if (tank3) tank3.tank.dano = 0;
+      alert("Tanque 1 (vermelho) venceu!");
+      resetaJogo(currentLevelIndex);
+    } else if (tank3.tank.dano >= 10) {
+      if (tank1) tank1.tank.dano = 0;
+      if (tank2) tank2.tank.dano = 0;
+      if (tank3) tank3.tank.dano = 0;
+      alert("Tanque 3 (verde) venceu!");
+      resetaJogo(currentLevelIndex);
     }
-
+  }
 }
 
 function render() {
-    requestAnimationFrame(render);
-    renderer.render(scene, camera);
-    console.log("Nível atual:", index); // Exibe o nível atual no console
+  requestAnimationFrame(render);
+  renderer.render(scene, camera);
+  console.log("Nível atual:", index); // Exibe o nível atual no console
 
-    if (index === 0) {
-        if (tank1 && tank2) {
-            keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, null, null);
-            checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, null, null, bbWalls);
-            updateCameraPosition(camera, index, tank1.tank.object, tank2.tank.object, orbitControlsEnabled);
+  if (index === 0) {
+    if (tank1 && tank2) {
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        null,
+        null
+      );
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        null,
+        null,
+        bbWalls
+      );
+      updateCameraPosition(
+        camera,
+        index,
+        tank1.tank.object,
+        tank2.tank.object,
+        orbitControlsEnabled
+      );
 
-            mostraPlacar();
-            verificaPlacar();
-        }
-    } else if (index === 1) {
-        if (tank1 && tank2 && tank3) {
-            keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
-            checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, tank3.tank.object, tank3.bbTank, bbWalls);
-            updateCameraPosition(camera, index, tank1.tank.object, tank2.tank.object, tank3.tank.object, orbitControlsEnabled);
-
-            mostraPlacar();
-            verificaPlacar();
-        }
+      mostraPlacar();
+      verificaPlacar();
     }
+  } else if (index === 1) {
+    if (tank1 && tank2 && tank3) {
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        tank3.tank,
+        tank3.bbTank
+      );
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        tank3.tank.object,
+        tank3.bbTank,
+        bbWalls
+      );
+      updateCameraPosition(
+        camera,
+        index,
+        tank1.tank.object,
+        tank2.tank.object,
+        tank3.tank.object,
+        orbitControlsEnabled
+      );
+
+      mostraPlacar();
+      verificaPlacar();
+    }
+  }
 }
 
 render();
