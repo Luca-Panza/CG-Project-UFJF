@@ -7,10 +7,7 @@ import {
   setDefaultMaterial,
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
-import {
-  SecondaryBoxTopEsquerda,
-  SecondaryBoxTopDireita,
-} from "./util/util.js";
+import { SecondaryBoxTopEsquerda } from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
 import { buildTutorial } from "./controls/tutorialControl.js";
