@@ -9,11 +9,15 @@ const keyboard = new KeyboardState();
 // Gerenciador de bolas
 const ballsTank1 = [];
 
-// Controles de temporização para atirar
-let lastShotTimeTank1 = 0;
-const shotCoolDown = 500;
-
-function keyboardUpdateTank1(index, tank1, bbTank1, tankInimigo2, bbTankInimigo2, tankInimigo3, bbTankInimigo3) {
+function keyboardUpdateTank1(
+  index,
+  tank1,
+  bbTank1,
+  tankInimigo2,
+  bbTankInimigo2,
+  tankInimigo3,
+  bbTankInimigo3
+) {
   keyboard.update();
   tank1.object.previousPosition = tank1.object.position.clone();
 
@@ -28,9 +32,7 @@ function keyboardUpdateTank1(index, tank1, bbTank1, tankInimigo2, bbTankInimigo2
 
   bbTank1.setFromObject(tank1.object);
 
-  if (keyboard.pressed("space") && Date.now() - lastShotTimeTank1 >= shotCoolDown) {
-    lastShotTimeTank1 = Date.now();
-
+  if (keyboard.down("space")) {
     const direction = new THREE.Vector3();
     tank1.object.getWorldDirection(direction);
 
@@ -54,14 +56,22 @@ function keyboardUpdateTank1(index, tank1, bbTank1, tankInimigo2, bbTankInimigo2
       targetTank.forEach((tank, idx) => {
         const bb = targetBoundingBox[idx];
         const ball = new Ball(direction, tank, bb);
-        ball.object.position.set(tank1.object.position.x, 3, tank1.object.position.z);
+        ball.object.position.set(
+          tank1.object.position.x,
+          3,
+          tank1.object.position.z
+        );
         ball.startMoving(true);
         ballsTank1.push(ball);
       });
     } else {
       // Apenas um inimigo
       const ball = new Ball(direction, targetTank, targetBoundingBox);
-      ball.object.position.set(tank1.object.position.x, 3, tank1.object.position.z);
+      ball.object.position.set(
+        tank1.object.position.x,
+        3,
+        tank1.object.position.z
+      );
       ball.startMoving(true);
       ballsTank1.push(ball);
     }
