@@ -93,15 +93,17 @@ function createTank(color, position, rotation) {
     .then((tankObject) => {
       tankObject.position.copy(position);
       tankObject.rotation.y = rotation;
-      tankObject.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshPhongMaterial({
-            color,
-            specular: 0x555555,
-            shininess: 30,
-          });
-        }
-      });
+      if (color != "tanqueUsuario") {
+        tankObject.traverse((child) => {
+          if (child.isMesh) {
+            child.material = new THREE.MeshPhongMaterial({
+              color,
+              specular: 0x555555,
+              shininess: 30,
+            });
+          }
+        });
+      }
 
       tank.object = tankObject;
       scene.add(tankObject);
@@ -143,14 +145,14 @@ function resetaJogo(index) {
   let tankPromises = [];
   if (index === 0) {
     tankPromises.push(
-      createTank(0xff0000, new THREE.Vector3(-20, 0, 15), Math.PI)
+      createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI)
     );
     tankPromises.push(
       createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI)
     );
   } else if (index === 1) {
     tankPromises.push(
-      createTank(0xff0000, new THREE.Vector3(-30, 0, -15), Math.PI / 360)
+      createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360)
     );
     tankPromises.push(
       createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
