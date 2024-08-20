@@ -16,9 +16,9 @@ function createLampposts(scene) {
       loadLamppost(config.position, config.rotationY)
         .then((lamppostObject) => {
           const positions = [
-            new THREE.Vector3(-40, 5, -30),
+            new THREE.Vector3(-43, 5, -30),
             new THREE.Vector3(-2.5, 5, -30),
-            new THREE.Vector3(40, 5, 30),
+            new THREE.Vector3(42, 5, 30),
             new THREE.Vector3(-2.5, 5, 30),
           ];
           lamppostObject.position.copy(positions[index]);

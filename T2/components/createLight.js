@@ -2,9 +2,15 @@ import * as THREE from "three";
 
 function createLightsForLevel1(scene, renderer) {
   // Criação da luz ambiente
-  const ambientColor = "rgb(80,80,80)";
+  const ambientColor = "rgb(50,50,50)";
   const ambientLight = new THREE.AmbientLight(ambientColor);
   scene.add(ambientLight);
+
+  // Criação da luz direcional
+  const directionalLight = new THREE.DirectionalLight("white", 0.1); // Ajuste a intensidade da luz conforme necessário
+  directionalLight.position.set(0, 10, 0); // Posição da luz
+  directionalLight.castShadow = true; // Habilita a projeção de sombras
+  scene.add(directionalLight); // Adiciona a luz à cena
 
   // Função para criar luzes spot
   function createSpotLight(position, targetPosition) {
