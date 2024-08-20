@@ -158,7 +158,7 @@ function resetaJogo(index) {
       createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
     );
     tankPromises.push(
-      createTank(0x00ff00, new THREE.Vector3(30, 0, 15), Math.PI)
+      createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI)
     );
     createLightsForLevel1(scene, renderer);
 
