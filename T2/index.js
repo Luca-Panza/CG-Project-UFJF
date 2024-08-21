@@ -337,8 +337,7 @@ function render() {
         tank2.tank,
         tank2.bbTank,
         tank1.tank,
-        tank1.bbTank,
-        bbWalls
+        tank1.bbTank
       );
 
       mostraNivel();
@@ -373,6 +372,26 @@ function render() {
         tank2.tank.object,
         tank3.tank.object,
         orbitControlsEnabled
+      );
+
+      enemyTankBehavior(
+        index,
+        tank2.tank,
+        tank2.bbTank,
+        tank1.tank,
+        tank1.bbTank,
+        tank3.tank,
+        tank3.bbTank
+      );
+
+      enemyTankBehavior(
+        index,
+        tank3.tank,
+        tank3.bbTank,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank
       );
 
       mostraNivel();
