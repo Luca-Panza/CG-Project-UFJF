@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import { initRenderer, initCamera, initDefaultBasicLight, setDefaultMaterial, createGroundPlaneXZ } from "../libs/util/util.js";
+import {
+  initRenderer,
+  initCamera,
+  initDefaultBasicLight,
+  setDefaultMaterial,
+  createGroundPlaneXZ,
+} from "../libs/util/util.js";
 import { SecondaryBoxTopEsquerda } from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
@@ -13,6 +19,7 @@ import { TankImport } from "./components/importTank.js";
 import { createLampposts } from "./components/importLamp.js";
 import { createLightsForLevel1 } from "./components/createLight.js";
 import { ProgressBar } from "./components/barraDeVida.js";
+import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -55,8 +62,14 @@ function updateGroundPlane() {
   const oldPlane = scene.getObjectByName("groundPlane");
   if (oldPlane) scene.remove(oldPlane);
 
-  planeWidth = Math.max(initialWidth * (window.innerWidth / window.innerHeight), initialWidth);
-  planeHeight = Math.max(initialHeight, initialHeight * (window.innerHeight / window.innerWidth));
+  planeWidth = Math.max(
+    initialWidth * (window.innerWidth / window.innerHeight),
+    initialWidth
+  );
+  planeHeight = Math.max(
+    initialHeight,
+    initialHeight * (window.innerHeight / window.innerWidth)
+  );
 
   const plane = createGroundPlaneXZ(planeWidth, planeHeight);
   plane.name = "groundPlane";
@@ -80,6 +93,7 @@ function createTank(color, position, rotation) {
     .then((tankObject) => {
       tankObject.position.copy(position);
       tankObject.rotation.y = rotation;
+
       if (color != "tanqueUsuario") {
         tankObject.traverse((child) => {
           if (child.isMesh) {
@@ -103,7 +117,7 @@ function createTank(color, position, rotation) {
 
       bbTank.setFromObject(tankObject);
       bbHelper = createBBHelper(bbTank, "white");
-      scene.add(bbHelper);
+      // scene.add(bbHelper);
 
       return { tank, bbTank, bbHelper, pbarTank };
     })
@@ -134,12 +148,22 @@ function resetaJogo(index) {
   if (index === 0) {
     light = initDefaultBasicLight(scene);
 
-    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI));
-    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI));
+    tankPromises.push(
+      createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI)
+    );
   } else if (index === 1) {
-    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360));
-    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360));
-    tankPromises.push(createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI));
+    tankPromises.push(
+      createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI)
+    );
 
     // Criação de luzes para o nível 1
     createLightsForLevel1(scene, renderer);
@@ -282,9 +306,40 @@ function render() {
 
   if (index === 0) {
     if (tank1 && tank2) {
-      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, null, null);
-      checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, null, null, bbWalls);
-      updateCameraPosition(camera, index, tank1.tank.object, tank2.tank.object, orbitControlsEnabled);
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        null,
+        null
+      );
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        null,
+        null,
+        bbWalls
+      );
+      updateCameraPosition(
+        camera,
+        index,
+        tank1.tank.object,
+        tank2.tank.object,
+        orbitControlsEnabled
+      );
+      enemyTankBehavior(
+        index,
+        tank2.tank,
+        tank2.bbTank,
+        tank1.tank,
+        tank1.bbTank,
+        bbWalls
+      );
 
       mostraNivel();
       verificaPlacar();
@@ -292,9 +347,33 @@ function render() {
     }
   } else if (index === 1) {
     if (tank1 && tank2 && tank3) {
-      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
-      checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, tank3.tank.object, tank3.bbTank, bbWalls);
-      updateCameraPosition(camera, index, tank1.tank.object, tank2.tank.object, tank3.tank.object, orbitControlsEnabled);
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        tank3.tank,
+        tank3.bbTank
+      );
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        tank3.tank.object,
+        tank3.bbTank,
+        bbWalls
+      );
+      updateCameraPosition(
+        camera,
+        index,
+        tank1.tank.object,
+        tank2.tank.object,
+        tank3.tank.object,
+        orbitControlsEnabled
+      );
 
       mostraNivel();
       verificaPlacar();
