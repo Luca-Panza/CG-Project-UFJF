@@ -9,14 +9,15 @@ export class TankImport {
     this.object = null;
     this.vida = 10;
 
-    this.loadTank()
-      .then((tank) => {
-        this.object = tank;
-        this.initializeTank();
-      })
-      .catch((error) => {
-        console.error("Erro ao carregar o tanque:", error);
-      });
+    // chamar essa função aqui estava causando o erro de carregamento pois estava sendo feito a mudança da posição do tanque duas vezes
+    // this.loadTank()
+    //   .then((tank) => {
+    //     this.object = tank;
+    //     this.initializeTank();
+    //   })
+    //   .catch((error) => {
+    //     console.error("Erro ao carregar o tanque:", error);
+    //   });
   }
 
   // Método para carregar o modelo GLB do tanque
@@ -48,6 +49,7 @@ export class TankImport {
   }
 
   // Inicializa o tanque após o carregamento
+  // essa função não precisa ser usada pois a inicialização do tanque já está sendo feita no index
   initializeTank() {
     if (this.object) {
       // Configura a cor do tanque
