@@ -1,14 +1,10 @@
 import * as THREE from "three";
-
 import { bbWalls, walls } from "../constants/constants.js";
 let wallMaterial;
 
 function createLevel(levelData, planeWidth, planeHeight, scene, index) {
   const wallGeometry = new THREE.BoxGeometry(5, 5, 5);
-  wallMaterial =
-    index === 0
-      ? new THREE.MeshBasicMaterial({ color: "grey" })
-      : new THREE.MeshLambertMaterial({ color: "green" });
+  wallMaterial = index === 0 ? new THREE.MeshBasicMaterial({ color: "grey" }) : new THREE.MeshLambertMaterial({ color: "green" });
   const edgeMaterial = new THREE.LineBasicMaterial({
     color: "white",
     linewidth: 3,
@@ -20,10 +16,11 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
 
   for (let i = 0; i < levelData.length; i++) {
     for (let j = 0; j < levelData[i].length; j++) {
-      if (levelData[i][j] === 1) {
+      if (levelData[i][j] !== 0) {
         const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+
+        const posY = levelData[i][j] === 2 ? 0 : 2.5;
         const posX = j * blockSize + offsetX;
-        const posY = 2.5;
         const posZ = -i * blockSize + offsetZ;
         wall.position.set(posX, posY, posZ);
 
@@ -34,9 +31,8 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
         scene.add(line);
 
         let bbWall = new THREE.Box3().setFromObject(wall);
-        // Definir normal padrão para as paredes do centro
-        let normal = new THREE.Vector3(1, 0, 0); // Escolha uma normal padrão para paredes centrais
-        // Verificar e alterar a normal para paredes de borda
+        let normal = new THREE.Vector3(1, 0, 0); // Normal padrão
+
         if (i === 0) {
           normal = new THREE.Vector3(0, 0, 1);
         } else if (i === levelData.length - 1) {
@@ -46,7 +42,7 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
         } else if (j === levelData[i].length - 1) {
           normal = new THREE.Vector3(-1, 0, 0);
         }
-        // Armazenar a normal calculada com a bbWall
+
         bbWall.normal = normal;
 
         walls.push(wall);
