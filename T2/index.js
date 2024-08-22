@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import { initRenderer, initCamera, initDefaultBasicLight, setDefaultMaterial, createGroundPlaneXZ } from "../libs/util/util.js";
+import {
+  initRenderer,
+  initCamera,
+  initDefaultBasicLight,
+  setDefaultMaterial,
+  createGroundPlaneXZ,
+} from "../libs/util/util.js";
 import { SecondaryBoxTopEsquerda } from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
@@ -57,8 +63,14 @@ function updateGroundPlane() {
   const oldPlane = scene.getObjectByName("groundPlane");
   if (oldPlane) scene.remove(oldPlane);
 
-  planeWidth = Math.max(initialWidth * (window.innerWidth / window.innerHeight), initialWidth);
-  planeHeight = Math.max(initialHeight, initialHeight * (window.innerHeight / window.innerWidth));
+  planeWidth = Math.max(
+    initialWidth * (window.innerWidth / window.innerHeight),
+    initialWidth
+  );
+  planeHeight = Math.max(
+    initialHeight,
+    initialHeight * (window.innerHeight / window.innerWidth)
+  );
 
   const plane = createGroundPlaneXZ(planeWidth, planeHeight);
   plane.name = "groundPlane";
@@ -137,12 +149,22 @@ function resetaJogo(index) {
   if (index === 0) {
     light = initDefaultBasicLight(scene);
 
-    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI));
-    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI));
+    tankPromises.push(
+      createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI)
+    );
   } else if (index === 1) {
-    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360));
-    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360));
-    tankPromises.push(createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI));
+    tankPromises.push(
+      createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI)
+    );
 
     // Criação de luzes para o nível 1
     createLightsForLevel1(scene, renderer);
@@ -279,38 +301,53 @@ function atualizaBarraDeVida() {
 }
 
 function verificaPlacar() {
+  // se nível = 1
   if (index === 0) {
+    // se o tank 1 (usuario) perder
     if (tank1.tank.vida <= 0) {
+      // reinicializando as vidas para não entrar em loop no if antes de resetar o jogo
       if (tank1) tank1.tank.vida = 10;
       if (tank2) tank2.tank.vida = 10;
-      alert("Tanque 2 (azul) venceu!");
-      resetaJogo(currentLevelIndex);
+      alert("Você perdeu! Tente novamente.");
+      // O usuário perdeu, então o jogo reinicia no primeiro nível
+      resetaJogo(0);
     } else if (tank2.tank.vida <= 0) {
+      // Se o usuário vencer
       if (tank1) tank1.tank.vida = 10;
       if (tank2) tank2.tank.vida = 10;
-      alert("Tanque 1 (vermelho) venceu!");
-      resetaJogo(currentLevelIndex);
+      alert("Parabén! Você venceu o nível 1! Está pronto para o nível 2?");
+      // como o usuário venceu, o jogo reinicia no próximo nível
+      resetaJogo(1);
     }
   } else if (index === 1) {
     // essa lógica aqui deve ser revista para verificar como fazer os vencedores do nível 2 com 3 jogadores
+    // if (tank1.tank.vida <= 0) {
+    //   if (tank1) tank1.tank.vida = 10;
+    //   if (tank2) tank2.tank.vida = 10;
+    //   if (tank3) tank3.tank.vida = 10;
+    //   alert("Tanque 2 (azul) venceu!");
+    //   resetaJogo(currentLevelIndex);
+    // } else if (tank2.tank.vida <= 0) {
+    //   if (tank1) tank1.tank.vida = 10;
+    //   if (tank2) tank2.tank.vida = 10;
+    //   if (tank3) tank3.tank.vida = 10;
+    //   alert("Tanque 1 (vermelho) venceu!");
+    //   resetaJogo(currentLevelIndex);
+    // } else if (tank3.tank.vida <= 0) {
+    //   if (tank1) tank1.tank.vida = 10;
+    //   if (tank2) tank2.tank.vida = 10;
+    //   if (tank3) tank3.tank.vida = 10;
+    //   alert("Tanque 3 (verde) venceu!");
+    //   resetaJogo(currentLevelIndex);
+    // }
+
+    // se o usuário perder, mostrar uma mensagem na tela dizendo que ele perdeu e reiniciar o jogo no nível 2
     if (tank1.tank.vida <= 0) {
       if (tank1) tank1.tank.vida = 10;
       if (tank2) tank2.tank.vida = 10;
       if (tank3) tank3.tank.vida = 10;
-      alert("Tanque 2 (azul) venceu!");
-      resetaJogo(currentLevelIndex);
-    } else if (tank2.tank.vida <= 0) {
-      if (tank1) tank1.tank.vida = 10;
-      if (tank2) tank2.tank.vida = 10;
-      if (tank3) tank3.tank.vida = 10;
-      alert("Tanque 1 (vermelho) venceu!");
-      resetaJogo(currentLevelIndex);
-    } else if (tank3.tank.vida <= 0) {
-      if (tank1) tank1.tank.vida = 10;
-      if (tank2) tank2.tank.vida = 10;
-      if (tank3) tank3.tank.vida = 10;
-      alert("Tanque 3 (verde) venceu!");
-      resetaJogo(currentLevelIndex);
+      alert("Você perdeu! Tente novamente.");
+      resetaJogo(1);
     }
   }
 }
@@ -318,14 +355,42 @@ function verificaPlacar() {
 function render() {
   requestAnimationFrame(render);
   renderer.render(scene, camera);
-  console.log("Nível atual:", index); // Exibe o nível atual no console
 
   if (index === 0) {
     if (tank1 && tank2) {
-      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, null, null);
-      checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, null, null, bbWalls);
-      updateCameraPosition(camera, index, tank1.tank.object, tank2.tank.object, orbitControlsEnabled);
-      enemyTankBehavior(index, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank);
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        null,
+        null
+      );
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        null,
+        null,
+        bbWalls
+      );
+      updateCameraPosition(
+        camera,
+        index,
+        tank1.tank.object,
+        tank2.tank.object,
+        orbitControlsEnabled
+      );
+      enemyTankBehavior(
+        index,
+        tank2.tank,
+        tank2.bbTank,
+        tank1.tank,
+        tank1.bbTank
+      );
 
       mostraNivel();
       verificaPlacar();
@@ -333,13 +398,53 @@ function render() {
     }
   } else if (index === 1) {
     if (tank1 && tank2 && tank3) {
-      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
-      checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, tank3.tank.object, tank3.bbTank, bbWalls);
-      updateCameraPosition(camera, index, tank1.tank.object, tank2.tank.object, tank3.tank.object, orbitControlsEnabled);
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        tank3.tank,
+        tank3.bbTank
+      );
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        tank3.tank.object,
+        tank3.bbTank,
+        bbWalls
+      );
+      updateCameraPosition(
+        camera,
+        index,
+        tank1.tank.object,
+        tank2.tank.object,
+        tank3.tank.object,
+        orbitControlsEnabled
+      );
 
-      enemyTankBehavior(index, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank, tank3.tank, tank3.bbTank);
+      enemyTankBehavior(
+        index,
+        tank2.tank,
+        tank2.bbTank,
+        tank1.tank,
+        tank1.bbTank,
+        tank3.tank,
+        tank3.bbTank
+      );
 
-      enemyTankBehavior(index, tank3.tank, tank3.bbTank, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank);
+      enemyTankBehavior(
+        index,
+        tank3.tank,
+        tank3.bbTank,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank
+      );
 
       mostraNivel();
       verificaPlacar();

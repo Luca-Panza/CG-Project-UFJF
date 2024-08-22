@@ -23,7 +23,7 @@ function createLampposts(scene) {
           ];
           lamppostObject.position.copy(positions[index]);
           scene.add(lamppostObject);
-          console.log("Poste adicionado à cena:", lamppostObject);
+          // console.log("Poste adicionado à cena:", lamppostObject);
         })
         .catch((error) => {
           console.error("Erro ao adicionar o poste à cena:", error);
