@@ -43,6 +43,7 @@ function shoot(
 }
 
 // Função de comportamento do tanque inimigo
+
 function enemyTankBehavior(
   index,
   numTank,
@@ -57,17 +58,15 @@ function enemyTankBehavior(
   const backwardSpeed = speed; // Velocidade de movimentação para trás
   const safeDistance = 20; // Distância mínima segura entre tanques
   const distance = tank.object.position.distanceTo(tankUsuario.object.position);
+  const tolerance = 1; // Tolerância para evitar o tremor
 
-  if (distance > safeDistance) {
-    // Se a distância for maior que a distância segura, perseguir o usuário
+  if (distance > safeDistance + tolerance) {
+    // Se a distância for maior que a distância segura + tolerância, perseguir o usuário
     tank.object.lookAt(tankUsuario.object.position);
     tank.object.previousPosition = tank.object.position.clone();
     tank.object.translateZ(speed);
-  } else if (distance == safeDistance) {
-    // Se a distância for exatamente a distância segura, apenas olhar para o usuário
-    // tank.object.lookAt(tankUsuario.object.position);
-  } else {
-    // Se a distância for menor que a distância segura, fugir do usuário
+  } else if (distance < safeDistance - tolerance) {
+    // Se a distância for menor que a distância segura - tolerância, fugir do usuário
     const direction = new THREE.Vector3();
     direction
       .subVectors(tank.object.position, tankUsuario.object.position)
