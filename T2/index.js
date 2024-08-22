@@ -255,8 +255,14 @@ function resetaJogo(index) {
     // Atribuir os tanques globais
     [tank1, tank2, tank3] = results;
     if (tank1) tank1.tank.vida = 10;
-    if (tank2) tank2.tank.vida = 10;
-    if (tank3) tank3.tank.vida = 10;
+    if (tank2) {
+      tank2.tank.vida = 10;
+      tank2.tank.object.visible = true;
+    }
+    if (tank3) {
+      tank3.tank.vida = 10;
+      tank3.tank.object.visible = true;
+    }
   });
 }
 
@@ -307,41 +313,75 @@ function verificaPlacar() {
     if (tank1.tank.vida <= 0) {
       // reinicializando as vidas para não entrar em loop no if antes de resetar o jogo
       if (tank1) tank1.tank.vida = 10;
-      if (tank2) tank2.tank.vida = 10;
+      if (tank2) {
+        tank2.tank.vida = 10;
+        tank2.tank.object.visible = true;
+      }
+      if (tank3) {
+        tank3.tank.vida = 10;
+        tank3.tank.object.visible = true;
+      }
       alert("Você perdeu! Tente novamente.");
       // O usuário perdeu, então o jogo reinicia no primeiro nível
-      resetaJogo(0);
+      index = 0;
+      currentLevelIndex = 0; // Atualiza o índice do nível atual
+      resetaJogo(index);
     } else if (tank2.tank.vida <= 0) {
       // Se o usuário vencer
       if (tank1) tank1.tank.vida = 10;
-      if (tank2) tank2.tank.vida = 10;
+      if (tank2) {
+        tank2.tank.vida = 10;
+        tank2.tank.object.visible = true;
+      }
+      if (tank3) {
+        tank3.tank.vida = 10;
+        tank3.tank.object.visible = true;
+      }
       alert("Parabén! Você venceu o nível 1! Está pronto para o nível 2?");
       // como o usuário venceu, o jogo reinicia no próximo nível
-      resetaJogo(1);
+      index = 1;
+      currentLevelIndex = 1; // Atualiza o índice do nível atual
+      resetaJogo(index);
     }
   } else if (index === 1) {
     // se o usuário perder, mostrar uma mensagem na tela dizendo que ele perdeu e reiniciar o jogo no nível 2
     if (tank1.tank.vida <= 0) {
       if (tank1) tank1.tank.vida = 10;
-      if (tank2) tank2.tank.vida = 10;
-      if (tank3) tank3.tank.vida = 10;
+      if (tank2) {
+        tank2.tank.vida = 10;
+        tank2.tank.object.visible = true;
+      }
+      if (tank3) {
+        tank3.tank.vida = 10;
+        tank3.tank.object.visible = true;
+      }
       alert("Você perdeu! Tente novamente.");
-      resetaJogo(1);
+      index = 1;
+      currentLevelIndex = 1; // Atualiza o índice do nível atual
+      resetaJogo(index);
     }
-    if (tank2.tank.vida <= 0) {
+    if (tank2.tank.vida <= 0 && tank3.tank.vida > 0) {
       // o tanque deve desaparecer da tela
       tank2.tank.object.visible = false;
     }
-    if (tank3.tank.vida <= 0) {
+    if (tank3.tank.vida <= 0 && tank2.tank.vida > 0) {
       // o tanque deve desaparecer da tela
       tank3.tank.object.visible = false;
     }
     if (tank2.tank.vida <= 0 && tank3.tank.vida <= 0) {
       if (tank1) tank1.tank.vida = 10;
-      if (tank2) tank2.tank.vida = 10;
-      if (tank3) tank3.tank.vida = 10;
+      if (tank2) {
+        tank2.tank.vida = 10;
+        tank2.tank.object.visible = true;
+      }
+      if (tank3) {
+        tank3.tank.vida = 10;
+        tank3.tank.object.visible = true;
+      }
       alert("Parabén! Você venceu o jogo! Quer jogar novamente?");
-      resetaJogo(1);
+      index = 1;
+      currentLevelIndex = 1; // Atualiza o índice do nível atual
+      resetaJogo(index);
     }
   }
 }
