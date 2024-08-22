@@ -5,7 +5,8 @@ import { Ball } from "../components/createBall.js";
 const ballsTank = [];
 
 // Variável para armazenar o tempo do último disparo
-let lastShootTime = 0;
+let lastShootTime2 = 0;
+let lastShootTime3 = 0;
 const shootInterval = 2000; // Intervalo de tempo em milissegundos (2 segundos)
 
 // Função de disparo
@@ -44,6 +45,7 @@ function shoot(
 // Função de comportamento do tanque inimigo
 function enemyTankBehavior(
   index,
+  numTank,
   tank,
   bbTank,
   tankUsuario,
@@ -81,17 +83,32 @@ function enemyTankBehavior(
   bbTank.setFromObject(tank.object);
 
   // Verificar se o tempo definido se passou desde o último disparo
-  const currentTime = performance.now();
-  if (currentTime - lastShootTime >= shootInterval) {
-    shoot(
-      tank,
-      index,
-      tankUsuario,
-      bbTankUsuario,
-      tankInimigo2,
-      bbtankInimigo2
-    );
-    lastShootTime = currentTime; // Atualizar o tempo do último disparo
+  if (numTank == 2) {
+    const currentTime2 = performance.now();
+    if (currentTime2 - lastShootTime2 >= shootInterval) {
+      shoot(
+        tank,
+        index,
+        tankUsuario,
+        bbTankUsuario,
+        tankInimigo2,
+        bbtankInimigo2
+      );
+      lastShootTime2 = currentTime2; // Atualizar o tempo do último disparo
+    }
+  } else {
+    const currentTime3 = performance.now();
+    if (currentTime3 - lastShootTime3 >= shootInterval) {
+      shoot(
+        tank,
+        index,
+        tankUsuario,
+        bbTankUsuario,
+        tankInimigo2,
+        bbtankInimigo2
+      );
+      lastShootTime3 = currentTime3; // Atualizar o tempo do último disparo
+    }
   }
 
   // Mover as bolas disparadas

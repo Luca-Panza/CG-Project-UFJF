@@ -386,6 +386,7 @@ function render() {
       );
       enemyTankBehavior(
         index,
+        2,
         tank2.tank,
         tank2.bbTank,
         tank1.tank,
@@ -428,6 +429,7 @@ function render() {
 
       enemyTankBehavior(
         index,
+        2,
         tank2.tank,
         tank2.bbTank,
         tank1.tank,
@@ -438,6 +440,7 @@ function render() {
 
       enemyTankBehavior(
         index,
+        3,
         tank3.tank,
         tank3.bbTank,
         tank1.tank,
