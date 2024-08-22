@@ -320,33 +320,27 @@ function verificaPlacar() {
       resetaJogo(1);
     }
   } else if (index === 1) {
-    // essa lógica aqui deve ser revista para verificar como fazer os vencedores do nível 2 com 3 jogadores
-    // if (tank1.tank.vida <= 0) {
-    //   if (tank1) tank1.tank.vida = 10;
-    //   if (tank2) tank2.tank.vida = 10;
-    //   if (tank3) tank3.tank.vida = 10;
-    //   alert("Tanque 2 (azul) venceu!");
-    //   resetaJogo(currentLevelIndex);
-    // } else if (tank2.tank.vida <= 0) {
-    //   if (tank1) tank1.tank.vida = 10;
-    //   if (tank2) tank2.tank.vida = 10;
-    //   if (tank3) tank3.tank.vida = 10;
-    //   alert("Tanque 1 (vermelho) venceu!");
-    //   resetaJogo(currentLevelIndex);
-    // } else if (tank3.tank.vida <= 0) {
-    //   if (tank1) tank1.tank.vida = 10;
-    //   if (tank2) tank2.tank.vida = 10;
-    //   if (tank3) tank3.tank.vida = 10;
-    //   alert("Tanque 3 (verde) venceu!");
-    //   resetaJogo(currentLevelIndex);
-    // }
-
     // se o usuário perder, mostrar uma mensagem na tela dizendo que ele perdeu e reiniciar o jogo no nível 2
     if (tank1.tank.vida <= 0) {
       if (tank1) tank1.tank.vida = 10;
       if (tank2) tank2.tank.vida = 10;
       if (tank3) tank3.tank.vida = 10;
       alert("Você perdeu! Tente novamente.");
+      resetaJogo(1);
+    }
+    if (tank2.tank.vida <= 0) {
+      // o tanque deve desaparecer da tela
+      tank2.tank.object.visible = false;
+    }
+    if (tank3.tank.vida <= 0) {
+      // o tanque deve desaparecer da tela
+      tank3.tank.object.visible = false;
+    }
+    if (tank2.tank.vida <= 0 && tank3.tank.vida <= 0) {
+      if (tank1) tank1.tank.vida = 10;
+      if (tank2) tank2.tank.vida = 10;
+      if (tank3) tank3.tank.vida = 10;
+      alert("Parabén! Você venceu o jogo! Quer jogar novamente?");
       resetaJogo(1);
     }
   }
@@ -427,27 +421,31 @@ function render() {
         orbitControlsEnabled
       );
 
-      enemyTankBehavior(
-        index,
-        2,
-        tank2.tank,
-        tank2.bbTank,
-        tank1.tank,
-        tank1.bbTank,
-        tank3.tank,
-        tank3.bbTank
-      );
+      if (tank2.tank.object.visible == true) {
+        enemyTankBehavior(
+          index,
+          2,
+          tank2.tank,
+          tank2.bbTank,
+          tank1.tank,
+          tank1.bbTank,
+          tank3.tank,
+          tank3.bbTank
+        );
+      }
 
-      enemyTankBehavior(
-        index,
-        3,
-        tank3.tank,
-        tank3.bbTank,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank
-      );
+      if (tank3.tank.object.visible == true) {
+        enemyTankBehavior(
+          index,
+          3,
+          tank3.tank,
+          tank3.bbTank,
+          tank1.tank,
+          tank1.bbTank,
+          tank2.tank,
+          tank2.bbTank
+        );
+      }
 
       mostraNivel();
       verificaPlacar();

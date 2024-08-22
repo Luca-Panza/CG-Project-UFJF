@@ -18,7 +18,10 @@ function checkCollisionsTankWall(tank, bbTank, bbWalls) {
     const bbWall = bbWalls[i]; // Bounding box da parede atual
     if (bbWall.intersectsBox(bbTank)) {
       const normal = bbWall.normal; // Normal da parede com a qual houve colisão
-      const moveDirection = new THREE.Vector3().subVectors(tank.position, tank.previousPosition);
+      const moveDirection = new THREE.Vector3().subVectors(
+        tank.position,
+        tank.previousPosition
+      );
       const adjustment = moveDirection.projectOnPlane(normal); // Projetar o vetor de movimento na direção perpendicular à normal
 
       tank.position.copy(tank.previousPosition).add(adjustment); // Ajustar a posição com base na projeção
@@ -27,26 +30,40 @@ function checkCollisionsTankWall(tank, bbTank, bbWalls) {
   }
 }
 
-function checkCollisions(index, tank1, bbTank1, tank2, bbTank2, tank3, bbTank3, bbWalls) {
+function checkCollisions(
+  index,
+  tank1,
+  bbTank1,
+  tank2,
+  bbTank2,
+  tank3,
+  bbTank3,
+  bbWalls
+) {
   if (index === 0) {
     // Verificar colisões entre tanque 1 e tanque 2
     checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2);
-    
+
     // Verificar colisões entre tanque 1 e as paredes
     checkCollisionsTankWall(tank1, bbTank1, bbWalls);
-    
+
     // Verificar colisões entre tanque 2 e as paredes
     checkCollisionsTankWall(tank2, bbTank2, bbWalls);
   } else if (index === 1) {
     // Verificar colisões entre tanque 1, tanque 2 e tanque 3
-    checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2);
-    checkCollisionsTankTank(tank1, bbTank1, tank3, bbTank3);
-    checkCollisionsTankTank(tank2, bbTank2, tank3, bbTank3);
+    if (tank2.visible == true)
+      checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2);
+
+    if (tank3.visible == true)
+      checkCollisionsTankTank(tank1, bbTank1, tank3, bbTank3);
+
+    if (tank2.visible == true && tank3.visible == true)
+      checkCollisionsTankTank(tank2, bbTank2, tank3, bbTank3);
 
     // Verificar colisões entre tanque 1, tanque 2 e tanque 3 com as paredes
     checkCollisionsTankWall(tank1, bbTank1, bbWalls);
-    checkCollisionsTankWall(tank2, bbTank2, bbWalls);
-    checkCollisionsTankWall(tank3, bbTank3, bbWalls);
+    if (tank2.visible == true) checkCollisionsTankWall(tank2, bbTank2, bbWalls);
+    if (tank3.visible == true) checkCollisionsTankWall(tank3, bbTank3, bbWalls);
   }
 }
 
