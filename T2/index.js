@@ -181,7 +181,7 @@ function createRotatingCannon() {
   // Criação do grupo para o canhão
   let cannonGroup = new THREE.Group();
   cannonGroup.add(csgFinal);
-  cannonGroup.position.set(-1.5, 3, 0);
+  cannonGroup.position.set(-5.7, 3, 0);
   cannonGroup.rotation.x = Math.PI / 2;
 
   return cannonGroup;
