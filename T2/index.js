@@ -21,6 +21,8 @@ import { createLightsForLevel1 } from "./components/createLight.js";
 import { ProgressBar } from "./components/barraDeVida.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
+// import { createRotatingCannon } from "./components/createCannon.js";
+import { shootCannon } from "./controls/tiroCanhao.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -34,6 +36,7 @@ let index = 0;
 
 // Declarar variáveis globais para os tanques
 let tank1, tank2, tank3;
+let cannon;
 
 function init() {
   renderer = initRenderer();
@@ -127,6 +130,68 @@ function createTank(color, position, rotation) {
     });
 }
 
+// função para criar e modelar o canhão do meio
+function createRotatingCannon() {
+  // Criação do objeto CSG para o canhão
+  let cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 1));
+  let cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 20));
+  cylinderMesh.position.set(0, 0, 0);
+  cylinderMesh.rotation.x = Math.PI / 2;
+  cubeMesh.updateMatrix();
+  cylinderMesh.updateMatrix();
+
+  let cubeCSG = CSG.fromMesh(cubeMesh);
+  let cylinderCSG = CSG.fromMesh(cylinderMesh);
+  let intersectedCSG = cubeCSG.intersect(cylinderCSG);
+
+  let cylinderMesh1 = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.4, 0.4, 4, 20)
+  );
+  cylinderMesh1.position.set(0, 0, -2.5);
+  cylinderMesh1.rotation.x = Math.PI / 2;
+  cylinderMesh1.updateMatrix();
+
+  let cylinderCSG1 = CSG.fromMesh(cylinderMesh1);
+  let finalCSG = intersectedCSG.union(cylinderCSG1);
+
+  let cylinderMesh2 = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.45, 0.45, 8, 20)
+  );
+  cylinderMesh2.position.set(0, 0, -4);
+  cylinderMesh2.rotation.y = Math.PI / 2;
+  cylinderMesh2.updateMatrix();
+
+  let cylinderCSG2 = CSG.fromMesh(cylinderMesh2);
+
+  let innerCylinderMesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.35, 0.35, 8, 20)
+  );
+  innerCylinderMesh.position.set(0, 0, -4);
+  innerCylinderMesh.rotation.y = Math.PI / 2;
+  innerCylinderMesh.updateMatrix();
+
+  let innerCylinderCSG = CSG.fromMesh(innerCylinderMesh);
+  let hollowCylinderCSG = cylinderCSG2.subtract(innerCylinderCSG);
+
+  finalCSG = finalCSG.union(hollowCylinderCSG);
+
+  let csgFinal = CSG.toMesh(finalCSG, new THREE.Matrix4());
+  csgFinal.material = new THREE.MeshPhongMaterial({ color: "lightgreen" });
+
+  // Criação do grupo para o canhão
+  let cannonGroup = new THREE.Group();
+  cannonGroup.add(csgFinal);
+  cannonGroup.position.set(-1.5, 3, 0);
+  cannonGroup.rotation.x = Math.PI / 2;
+
+  return cannonGroup;
+}
+
+function comportamentoCannon(canhao, targetTank, targetBoundingBox, index) {
+  canhao.rotation.z += 0.01; // Rotação lenta ao redor do eixo Y
+  shootCannon(canhao, targetTank, targetBoundingBox, index);
+}
+
 function clearPreviousLevel() {
   walls.forEach((wall) => scene.remove(wall));
   walls.length = 0;
@@ -172,83 +237,9 @@ function resetaJogo(index) {
     // Criação de postes de luz
     createLampposts(scene);
 
-    // Criação de um objeto CSG
-    // Cria um cubo e um cilindro para interseção
-    /*
-    let cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 1));
-    let cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 20));
-
-    // Posiciona e rotaciona o cilindro para intersectar com o cubo
-    cylinderMesh.position.set(0, 0, 0);
-    cylinderMesh.rotation.x = Math.PI / 2; // Rotaciona o cilindro para ficar na horizontal
-
-    // Atualiza as transformações
-    cubeMesh.matrixAutoUpdate = false;
-    cubeMesh.updateMatrix();
-    cylinderMesh.matrixAutoUpdate = false;
-    cylinderMesh.updateMatrix();
-
-    // Converte as geometrias para CSG
-    let cubeCSG = CSG.fromMesh(cubeMesh);
-    let cylinderCSG = CSG.fromMesh(cylinderMesh);
-
-    // Realiza a operação de interseção para criar a base
-    let intersectedCSG = cubeCSG.intersect(cylinderCSG);
-
-    // Criação do primeiro cilindro adicional
-    let cylinderMesh1 = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 4, 20));
-    cylinderMesh1.position.set(0, 0, -2.5); // Centro do cilindro base
-    cylinderMesh1.rotation.x = Math.PI / 2; // Alinha o cilindro com a base
-
-    // Atualiza as transformações do cilindro adicional
-    cylinderMesh1.matrixAutoUpdate = false;
-    cylinderMesh1.updateMatrix();
-
-    let cylinderCSG1 = CSG.fromMesh(cylinderMesh1);
-
-    // Realiza a união do cilindro adicional com a base resultante da interseção
-    let finalCSG = intersectedCSG.union(cylinderCSG1);
-
-    // Criação do segundo cilindro (maior)
-    let cylinderMesh2 = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 8, 20));
-    cylinderMesh2.position.set(0, 0, -4); // Posição central na base
-    cylinderMesh2.rotation.y = Math.PI / 2; // Rotaciona 90 graus ao redor do eixo Y
-
-    // Atualiza as transformações do segundo cilindro
-    cylinderMesh2.matrixAutoUpdate = false;
-    cylinderMesh2.updateMatrix();
-
-    let cylinderCSG2 = CSG.fromMesh(cylinderMesh2);
-
-    // Criação de um cilindro menor para subtração (tornando o maior oco)
-    let innerCylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 8, 20));
-    innerCylinderMesh.position.set(0, 0, -4); // Mesma posição do cilindro maior
-    innerCylinderMesh.rotation.y = Math.PI / 2; // Mesma rotação do cilindro maior
-
-    // Atualiza as transformações do cilindro menor
-    innerCylinderMesh.matrixAutoUpdate = false;
-    innerCylinderMesh.updateMatrix();
-
-    let innerCylinderCSG = CSG.fromMesh(innerCylinderMesh);
-
-    // Subtração do cilindro menor do maior para criar um cilindro oco
-    let hollowCylinderCSG = cylinderCSG2.subtract(innerCylinderCSG);
-
-    // Realiza a união do cilindro oco com o objeto base
-    finalCSG = finalCSG.union(hollowCylinderCSG);
-
-    // Converte o CSG resultante de volta para um Mesh
-    let csgFinal = CSG.toMesh(finalCSG, new THREE.Matrix4());
-    csgFinal.material = new THREE.MeshPhongMaterial({ color: "lightgreen" });
-
-    // Adiciona o mesh final à cena
-    scene.add(csgFinal);
-
-    csgFinal.position.set(0, 5, 0);
-    csgFinal.rotation.x = Math.PI / 2;
-    */
-
-    //
+    // Criação do canhão
+    cannon = createRotatingCannon();
+    scene.add(cannon);
   }
 
   Promise.all(tankPromises).then((results) => {
@@ -433,6 +424,11 @@ function render() {
     }
   } else if (index === 1) {
     if (tank1 && tank2 && tank3) {
+      if (cannon) {
+        let targetTank = [tank1.tank, tank2.tank, tank3.tank];
+        let targetBoundingBox = [tank1.bbTank, tank2.bbTank, tank3.bbTank];
+        comportamentoCannon(cannon, targetTank, targetBoundingBox, index);
+      }
       keyboardUpdateTank1(
         index,
         tank1.tank,
