@@ -4,11 +4,14 @@ let wallMaterial;
 
 function createLevel(levelData, planeWidth, planeHeight, scene, index) {
   const wallGeometry = new THREE.BoxGeometry(5, 5, 5);
-  wallMaterial = index === 0 ? new THREE.MeshBasicMaterial({ color: "grey" }) : new THREE.MeshLambertMaterial({ color: "green" });
-  const edgeMaterial = new THREE.LineBasicMaterial({
-    color: "white",
-    linewidth: 3,
-  });
+  wallMaterial =
+    index === 0
+      ? new THREE.MeshBasicMaterial({ color: "grey" })
+      : new THREE.MeshLambertMaterial({ color: "green" });
+  // const edgeMaterial = new THREE.LineBasicMaterial({
+  //   color: "white",
+  //   linewidth: 3,
+  // });
 
   const blockSize = 5;
   const offsetX = -(planeWidth / 2 - blockSize / 2);
@@ -25,10 +28,10 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
         wall.position.set(posX, posY, posZ);
 
         // Adicionando arestas
-        const edges = new THREE.EdgesGeometry(wallGeometry);
-        const line = new THREE.LineSegments(edges, edgeMaterial);
-        line.position.set(posX, posY, posZ);
-        scene.add(line);
+        // const edges = new THREE.EdgesGeometry(wallGeometry);
+        // const line = new THREE.LineSegments(edges, edgeMaterial);
+        // line.position.set(posX, posY, posZ);
+        // scene.add(line);
 
         let bbWall = new THREE.Box3().setFromObject(wall);
         let normal = new THREE.Vector3(1, 0, 0); // Normal padrão
