@@ -95,7 +95,11 @@ export class Ball {
   buildGeometry() {
     let obj = new THREE.Mesh(
       new THREE.SphereGeometry(0.3, 32, 32),
-      new THREE.MeshPhongMaterial({ color: "white", shininess: "200" })
+      new THREE.MeshPhongMaterial({
+        color: "white",
+        shininess: 200, // Note que 'shininess' deve ser um número, não uma string
+        emissive: new THREE.Color("white"), // Defina a cor emissiva aqui
+      })
     );
     obj.castShadow = true;
     return obj;
