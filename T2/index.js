@@ -21,12 +21,11 @@ import { createLightsForLevel1 } from "./components/createLight.js";
 import { ProgressBar } from "./components/barraDeVida.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
-// import { createRotatingCannon } from "./components/createCannon.js";
 import { shootCannon } from "./controls/tiroCanhao.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
-let currentLevelIndex = 0; // Salva o índice do nível atual
+let currentLevelIndex = 0;
 
 const initialWidth = 85;
 const initialHeight = 60;
@@ -44,45 +43,21 @@ function init() {
   material = setDefaultMaterial();
   orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enabled = false;
-
-  updateRendererSize();
-  updateCameraAspect();
   updateGroundPlane();
 }
 
-function updateRendererSize() {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-}
-
-function updateCameraAspect() {
-  const aspect = window.innerWidth / window.innerHeight;
-  camera.aspect = aspect;
-  camera.updateProjectionMatrix();
-}
-
 function updateGroundPlane() {
-  // verificar se o cenário estpá centralizado na posição 00
-  const oldPlane = scene.getObjectByName("groundPlane");
-  if (oldPlane) scene.remove(oldPlane);
-
-  planeWidth = Math.max(
-    initialWidth * (window.innerWidth / window.innerHeight),
-    initialWidth
-  );
-  planeHeight = Math.max(
-    initialHeight,
-    initialHeight * (window.innerHeight / window.innerWidth)
-  );
-
+  // Remove o plano de fundo anterior se houver
+  const existingPlane = scene.getObjectByName("groundPlane");
+  if (existingPlane) scene.remove(existingPlane);
+  
+  // Cria e adiciona o novo plano de fundo
   const plane = createGroundPlaneXZ(planeWidth, planeHeight);
   plane.name = "groundPlane";
   scene.add(plane);
 }
 
 function onWindowResize() {
-  updateRendererSize();
-  updateCameraAspect();
   updateGroundPlane();
 }
 
@@ -92,123 +67,113 @@ function createTank(color, position, rotation) {
   let bbTank = new THREE.Box3();
   let bbHelper;
 
-  return tank
-    .loadTank()
-    .then((tankObject) => {
-      tankObject.position.copy(position);
-      tankObject.rotation.y = rotation;
+  return tank.loadTank().then((tankObject) => {
+    tankObject.position.copy(position);
+    tankObject.rotation.y = rotation;
 
-      if (color != "tanqueUsuario") {
-        tankObject.traverse((child) => {
-          if (child.isMesh) {
-            child.material = new THREE.MeshPhongMaterial({
-              color,
-              specular: 0x555555,
-              shininess: 30,
-            });
-          }
-        });
-      }
+    if (color !== "tanqueUsuario") {
+      tankObject.traverse((child) => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshPhongMaterial({
+            color,
+            specular: 0x555555,
+            shininess: 30,
+          });
+        }
+      });
+    }
 
-      tank.object = tankObject;
-      scene.add(tankObject);
-      loadedTank = tankObject;
+    tank.object = tankObject;
+    scene.add(tankObject);
+    loadedTank = tankObject;
 
-      //  Criando a barra de progresso
-      let pbarTank = new ProgressBar(tank.vida);
-      pbarTank.position.set(0, 6);
-      tankObject.add(pbarTank);
+    // Criando a barra de progresso
+    let pbarTank = new ProgressBar(tank.vida);
+    pbarTank.position.set(0, 6);
+    tankObject.add(pbarTank);
 
-      bbTank.setFromObject(tankObject);
-      bbHelper = createBBHelper(bbTank, "white");
-      // scene.add(bbHelper);
+    bbTank.setFromObject(tankObject);
+    bbHelper = createBBHelper(bbTank, "white");
+    // scene.add(bbHelper);
 
-      return { tank, bbTank, bbHelper, pbarTank };
-    })
-    .catch((error) => {
-      console.error(`Erro ao adicionar o tanque à cena: ${error}`);
-    });
+    return { tank, bbTank, bbHelper, pbarTank };
+  }).catch((error) => {
+    console.error(`Erro ao adicionar o tanque à cena: ${error}`);
+  });
 }
 
-// função para criar e modelar o canhão do meio
 function createRotatingCannon() {
-  // Criação do objeto CSG para o canhão
+  const createCylinderMesh = (radiusTop, radiusBottom, height, segments, position, rotation) => {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusTop, radiusBottom, height, segments));
+    mesh.position.copy(position);
+    mesh.rotation.copy(rotation);
+    mesh.updateMatrix();
+    return mesh;
+  };
+
   let cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 1));
-  let cylinderMesh = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 20));
-  cylinderMesh.position.set(0, 0, 0);
-  cylinderMesh.rotation.x = Math.PI / 2;
-  cubeMesh.updateMatrix();
-  cylinderMesh.updateMatrix();
+  let cylinderMesh = createCylinderMesh(2, 2, 4, 20, new THREE.Vector3(0, 0, 0), new THREE.Euler(Math.PI / 2, 0, 0));
 
   let cubeCSG = CSG.fromMesh(cubeMesh);
   let cylinderCSG = CSG.fromMesh(cylinderMesh);
   let intersectedCSG = cubeCSG.intersect(cylinderCSG);
 
-  let cylinderMesh1 = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.4, 0.4, 4, 20)
-  );
-  cylinderMesh1.position.set(0, 0, -2.5);
-  cylinderMesh1.rotation.x = Math.PI / 2;
-  cylinderMesh1.updateMatrix();
-
+  let cylinderMesh1 = createCylinderMesh(0.4, 0.4, 4, 20, new THREE.Vector3(0, 0, -2.5), new THREE.Euler(Math.PI / 2, 0, 0));
   let cylinderCSG1 = CSG.fromMesh(cylinderMesh1);
   let finalCSG = intersectedCSG.union(cylinderCSG1);
 
-  let cylinderMesh2 = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.45, 0.45, 8, 20)
-  );
-  cylinderMesh2.position.set(0, 0, -4);
-  cylinderMesh2.rotation.y = Math.PI / 2;
-  cylinderMesh2.updateMatrix();
-
+  let cylinderMesh2 = createCylinderMesh(0.45, 0.45, 8, 20, new THREE.Vector3(0, 0, -4), new THREE.Euler(0, Math.PI / 2, 0));
   let cylinderCSG2 = CSG.fromMesh(cylinderMesh2);
 
-  let innerCylinderMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.35, 0.35, 8, 20)
-  );
-  innerCylinderMesh.position.set(0, 0, -4);
-  innerCylinderMesh.rotation.y = Math.PI / 2;
-  innerCylinderMesh.updateMatrix();
-
+  let innerCylinderMesh = createCylinderMesh(0.35, 0.35, 8, 20, new THREE.Vector3(0, 0, -4), new THREE.Euler(0, Math.PI / 2, 0));
   let innerCylinderCSG = CSG.fromMesh(innerCylinderMesh);
   let hollowCylinderCSG = cylinderCSG2.subtract(innerCylinderCSG);
 
   finalCSG = finalCSG.union(hollowCylinderCSG);
-
   let csgFinal = CSG.toMesh(finalCSG, new THREE.Matrix4());
   csgFinal.material = new THREE.MeshPhongMaterial({ color: "lightgreen" });
 
-  // Criação do grupo para o canhão
   let cannonGroup = new THREE.Group();
   cannonGroup.add(csgFinal);
-  cannonGroup.position.set(-5.7, 3, 0);
+  cannonGroup.position.set(-2, 3, 0);
   cannonGroup.rotation.x = Math.PI / 2;
 
   return cannonGroup;
 }
 
 function comportamentoCannon(canhao, targetTank, targetBoundingBox, index) {
-  canhao.rotation.z += 0.01; // Rotação lenta ao redor do eixo Y
+  canhao.rotation.z += 0.01; // Rotação lenta ao redor do eixo Z
   shootCannon(canhao, targetTank, targetBoundingBox, index);
 }
 
 function clearPreviousLevel() {
+  console.log("Limpando paredes e caixas de colisão...");
   walls.forEach((wall) => scene.remove(wall));
   walls.length = 0;
   bbWalls.forEach((bbWall) => scene.remove(bbWall));
   bbWalls.length = 0;
 }
 
-function resetaJogo(index) {
+function resetGame(index) {
+  console.log("Removendo todos os objetos da cena...");
   while (scene.children.length > 0) {
-    scene.remove(scene.children[0]);
+    const child = scene.children[0];
+    scene.remove(child);
+    if (child.geometry) {
+      child.geometry.dispose();
+    }
+    if (child.material) {
+      if (Array.isArray(child.material)) {
+        child.material.forEach((material) => material.dispose());
+      } else {
+        child.material.dispose();
+      }
+    }
   }
   clearPreviousLevel();
   updateGroundPlane();
 
-  //light = initDefaultBasicLight(scene); // Para Iluminação do cenário do index 1
-
-  createLevel(levels[index], planeWidth / 2, planeHeight, scene, index);
+  createLevel(levels[index], planeWidth, planeHeight, scene, index);
 
   let tankPromises = [];
   if (index === 0) {
@@ -231,19 +196,14 @@ function resetaJogo(index) {
       createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI)
     );
 
-    // Criação de luzes para o nível 1
     createLightsForLevel1(scene, renderer);
-
-    // Criação de postes de luz
     createLampposts(scene);
 
-    // Criação do canhão
     cannon = createRotatingCannon();
     scene.add(cannon);
   }
 
   Promise.all(tankPromises).then((results) => {
-    // Atribuir os tanques globais
     [tank1, tank2, tank3] = results;
     if (tank1) tank1.tank.vida = 10;
     if (tank2) {
@@ -272,16 +232,16 @@ window.addEventListener("keydown", (event) => {
     }
   } else if (event.key === "1") {
     index = 0;
-    currentLevelIndex = 0; // Atualiza o índice do nível atual
-    resetaJogo(index);
+    currentLevelIndex = 0;
+    resetGame(index);
   } else if (event.key === "2") {
     index = 1;
-    currentLevelIndex = 1; // Atualiza o índice do nível atual
-    resetaJogo(index);
+    currentLevelIndex = 1;
+    resetGame(index);
   }
 });
 
-resetaJogo(index);
+resetGame(index);
 
 buildTutorial();
 
@@ -298,81 +258,28 @@ function atualizaBarraDeVida() {
 }
 
 function verificaPlacar() {
-  // se nível = 1
   if (index === 0) {
-    // se o tank 1 (usuario) perder
     if (tank1.tank.vida <= 0) {
-      // reinicializando as vidas para não entrar em loop no if antes de resetar o jogo
-      if (tank1) tank1.tank.vida = 10;
-      if (tank2) {
-        tank2.tank.vida = 10;
-        tank2.tank.object.visible = true;
-      }
-      if (tank3) {
-        tank3.tank.vida = 10;
-        tank3.tank.object.visible = true;
-      }
       alert("Você perdeu! Tente novamente.");
-      // O usuário perdeu, então o jogo reinicia no primeiro nível
-      index = 0;
-      currentLevelIndex = 0; // Atualiza o índice do nível atual
-      resetaJogo(index);
+      resetGame(0);
     } else if (tank2.tank.vida <= 0) {
-      // Se o usuário vencer
-      if (tank1) tank1.tank.vida = 10;
-      if (tank2) {
-        tank2.tank.vida = 10;
-        tank2.tank.object.visible = true;
-      }
-      if (tank3) {
-        tank3.tank.vida = 10;
-        tank3.tank.object.visible = true;
-      }
-      alert("Parabén! Você venceu o nível 1! Está pronto para o nível 2?");
-      // como o usuário venceu, o jogo reinicia no próximo nível
-      index = 1;
-      currentLevelIndex = 1; // Atualiza o índice do nível atual
-      resetaJogo(index);
+      alert("Parabéns! Você venceu o nível 1! Está pronto para o nível 2?");
+      resetGame(1);
     }
   } else if (index === 1) {
-    // se o usuário perder, mostrar uma mensagem na tela dizendo que ele perdeu e reiniciar o jogo no nível 2
     if (tank1.tank.vida <= 0) {
-      if (tank1) tank1.tank.vida = 10;
-      if (tank2) {
-        tank2.tank.vida = 10;
-        tank2.tank.object.visible = true;
-      }
-      if (tank3) {
-        tank3.tank.vida = 10;
-        tank3.tank.object.visible = true;
-      }
       alert("Você perdeu! Tente novamente.");
-      index = 1;
-      currentLevelIndex = 1; // Atualiza o índice do nível atual
-      resetaJogo(index);
+      resetGame(1);
     }
     if (tank2.tank.vida <= 0 && tank3.tank.vida > 0) {
-      // o tanque deve desaparecer da tela
       tank2.tank.object.visible = false;
     }
     if (tank3.tank.vida <= 0 && tank2.tank.vida > 0) {
-      // o tanque deve desaparecer da tela
       tank3.tank.object.visible = false;
     }
     if (tank2.tank.vida <= 0 && tank3.tank.vida <= 0) {
-      if (tank1) tank1.tank.vida = 10;
-      if (tank2) {
-        tank2.tank.vida = 10;
-        tank2.tank.object.visible = true;
-      }
-      if (tank3) {
-        tank3.tank.vida = 10;
-        tank3.tank.object.visible = true;
-      }
-      alert("Parabén! Você venceu o jogo! Quer jogar novamente?");
-      index = 1;
-      currentLevelIndex = 1; // Atualiza o índice do nível atual
-      resetaJogo(index);
+      alert("Parabéns! Você venceu o jogo! Quer jogar novamente?");
+      resetGame(1);
     }
   }
 }
@@ -457,7 +364,7 @@ function render() {
         orbitControlsEnabled
       );
 
-      if (tank2.tank.object.visible == true) {
+      if (tank2.tank.object.visible) {
         enemyTankBehavior(
           index,
           2,
@@ -470,7 +377,7 @@ function render() {
         );
       }
 
-      if (tank3.tank.object.visible == true) {
+      if (tank3.tank.object.visible) {
         enemyTankBehavior(
           index,
           3,
