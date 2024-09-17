@@ -22,6 +22,8 @@ import { ProgressBar } from "./components/barraDeVida.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
 import { shootCannon } from "./controls/tiroCanhao.js";
+import {createMovingWall, updateWalls} from "./components/wall.js";
+
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -34,7 +36,7 @@ let planeHeight = initialHeight;
 let index = 0;
 
 // Declarar variáveis globais para os tanques
-let tank1, tank2, tank3;
+let tank1, tank2, tank3, tank4;
 let cannon;
 
 function init() {
@@ -43,22 +45,32 @@ function init() {
   material = setDefaultMaterial();
   orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enabled = false;
-  updateGroundPlane();
+  updateGroundPlane(index);
 }
 
-function updateGroundPlane() {
+function updateGroundPlane(index) {
   // Remove o plano de fundo anterior se houver
   const existingPlane = scene.getObjectByName("groundPlane");
   if (existingPlane) scene.remove(existingPlane);
-  
+
+  // Ajusta o tamanho do plano de acordo com o nível
+  if (index === 2) { // Aqui usamos === para verificar o nível 3
+    planeWidth = 110;  // Aumenta o tamanho do plano para o nível 3
+    planeHeight = 60;
+  } else {
+    planeWidth = initialWidth;  // Para os outros níveis, mantemos o tamanho inicial
+    planeHeight = initialHeight;
+  }
+
   // Cria e adiciona o novo plano de fundo
   const plane = createGroundPlaneXZ(planeWidth, planeHeight);
   plane.name = "groundPlane";
   scene.add(plane);
 }
 
+
 function onWindowResize() {
-  updateGroundPlane();
+  updateGroundPlane(index);
 }
 
 function createTank(color, position, rotation) {
@@ -171,14 +183,13 @@ function resetGame(index) {
     }
   }
   clearPreviousLevel();
-  updateGroundPlane();
+  updateGroundPlane(index);
 
   createLevel(levels[index], planeWidth, planeHeight, scene, index);
 
   let tankPromises = [];
   if (index === 0) {
     light = initDefaultBasicLight(scene);
-
     tankPromises.push(
       createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI)
     );
@@ -201,10 +212,31 @@ function resetGame(index) {
 
     cannon = createRotatingCannon();
     scene.add(cannon);
+
+  } else if (index === 2) {
+    light = initDefaultBasicLight(scene);
+    createMovingWall(scene, new THREE.Vector3(2.5, 2.5, 0), 0, 0xFFA500);
+    createMovingWall(scene, new THREE.Vector3(-22.5, 2.5, 0), 0, 0xFFA500);
+    createMovingWall(scene, new THREE.Vector3(27.5, 2.5, 0), 0, 0xFFA500);
+
+    // Definição para o nível 3
+    tankPromises.push(
+      createTank("tanqueUsuario", new THREE.Vector3(-35, 0, 0), Math.PI / 2)
+    );
+    tankPromises.push(
+      createTank(0x0000ff, new THREE.Vector3(-10, 0, -20), Math.PI / 360)
+    );
+    tankPromises.push(
+      createTank(0xff0000, new THREE.Vector3(15, 0, 20), Math.PI)
+    );
+
+    tankPromises.push(
+      createTank(0xff00ff, new THREE.Vector3(40, 0, -20), Math.PI / 360)
+    );
   }
 
   Promise.all(tankPromises).then((results) => {
-    [tank1, tank2, tank3] = results;
+    [tank1, tank2, tank3, tank4] = results;
     if (tank1) tank1.tank.vida = 10;
     if (tank2) {
       tank2.tank.vida = 10;
@@ -214,8 +246,13 @@ function resetGame(index) {
       tank3.tank.vida = 10;
       tank3.tank.object.visible = true;
     }
+    if (tank4) {
+      tank4.tank.vida = 10;
+      tank4.tank.object.visible = true;
+    }
   });
 }
+
 
 init();
 
@@ -239,6 +276,11 @@ window.addEventListener("keydown", (event) => {
     currentLevelIndex = 1;
     resetGame(index);
   }
+  else if (event.key === "3") {
+    index = 2;
+    currentLevelIndex = 2;
+    resetGame(index);
+  }
 });
 
 resetGame(index);
@@ -255,6 +297,7 @@ function atualizaBarraDeVida() {
   if (tank1) tank1.pbarTank.updateProgress(tank1.tank.vida);
   if (tank2) tank2.pbarTank.updateProgress(tank2.tank.vida);
   if (tank3) tank3.pbarTank.updateProgress(tank3.tank.vida);
+  if (tank4) tank4.pbarTank.updateProgress(tank4.tank.vida);
 }
 
 function verificaPlacar() {
@@ -281,6 +324,9 @@ function verificaPlacar() {
       alert("Parabéns! Você venceu o jogo! Quer jogar novamente?");
       resetGame(1);
     }
+  }
+  else if (index === 2) {
+
   }
 }
 
@@ -311,9 +357,7 @@ function render() {
       );
       updateCameraPosition(
         camera,
-        index,
         tank1.tank.object,
-        tank2.tank.object,
         orbitControlsEnabled
       );
       enemyTankBehavior(
@@ -357,10 +401,7 @@ function render() {
       );
       updateCameraPosition(
         camera,
-        index,
         tank1.tank.object,
-        tank2.tank.object,
-        tank3.tank.object,
         orbitControlsEnabled
       );
 
@@ -389,6 +430,43 @@ function render() {
           tank2.bbTank
         );
       }
+
+      mostraNivel();
+      verificaPlacar();
+      atualizaBarraDeVida();
+    }
+  }
+
+  else if (index === 2) {
+    if (tank1 && tank2 && tank3 && tank4) {
+      keyboardUpdateTank1(
+        index,
+        tank1.tank,
+        tank1.bbTank,
+        tank2.tank,
+        tank2.bbTank,
+        tank3.tank,
+        tank3.bbTank
+      );
+
+      checkCollisions(
+        index,
+        tank1.tank.object,
+        tank1.bbTank,
+        tank2.tank.object,
+        tank2.bbTank,
+        tank3.tank.object,
+        tank3.bbTank,
+        bbWalls
+      );
+
+      updateCameraPosition(
+        camera,
+        tank1.tank.object,
+        orbitControlsEnabled
+      );
+
+      updateWalls(planeHeight);
 
       mostraNivel();
       verificaPlacar();
