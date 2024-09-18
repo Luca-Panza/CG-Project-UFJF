@@ -343,7 +343,7 @@ function render() {
         tank2.tank,
         tank2.bbTank,
         null,
-        null
+        null,
       );
       checkCollisions(
         index,
@@ -351,6 +351,8 @@ function render() {
         tank1.bbTank,
         tank2.tank.object,
         tank2.bbTank,
+        null,
+        null,
         null,
         null,
         bbWalls
@@ -397,6 +399,8 @@ function render() {
         tank2.bbTank,
         tank3.tank.object,
         tank3.bbTank,
+        null,
+        null,
         bbWalls
       );
       updateCameraPosition(
@@ -457,6 +461,8 @@ function render() {
         tank2.bbTank,
         tank3.tank.object,
         tank3.bbTank,
+        tank4.tank.object, 
+        tank4.bbTank,
         bbWalls
       );
 

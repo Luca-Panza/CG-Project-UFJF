@@ -38,6 +38,8 @@ function checkCollisions(
   bbTank2,
   tank3,
   bbTank3,
+  tank4,
+  bbTank4,
   bbWalls
 ) {
   if (index === 0) {
@@ -64,6 +66,30 @@ function checkCollisions(
     checkCollisionsTankWall(tank1, bbTank1, bbWalls);
     if (tank2.visible == true) checkCollisionsTankWall(tank2, bbTank2, bbWalls);
     if (tank3.visible == true) checkCollisionsTankWall(tank3, bbTank3, bbWalls);
+  } else if (index === 2) {
+    // Verificar colisões entre tanque 1, tanque 2 e tanque 3
+    if (tank2.visible == true)
+      checkCollisionsTankTank(tank1, bbTank1, tank2, bbTank2);
+
+    if (tank3.visible == true)
+      checkCollisionsTankTank(tank1, bbTank1, tank3, bbTank3);
+    
+    if (tank4.visible == true)
+      checkCollisionsTankTank(tank1, bbTank1, tank4, bbTank4);
+
+    if (tank2.visible == true && tank3.visible == true)
+      checkCollisionsTankTank(tank2, bbTank2, tank3, bbTank3);
+
+    if (tank2.visible == true && tank4.visible == true)
+      checkCollisionsTankTank(tank2, bbTank2, tank4, bbTank4);
+    if (tank3.visible == true && tank4.visible == true)
+      checkCollisionsTankTank(tank3, bbTank3, tank4, bbTank4);
+
+    // Verificar colisões entre tanque 1, tanque 2 e tanque 3 com as paredes
+    checkCollisionsTankWall(tank1, bbTank1, bbWalls);
+    if (tank2.visible == true) checkCollisionsTankWall(tank2, bbTank2, bbWalls);
+    if (tank3.visible == true) checkCollisionsTankWall(tank3, bbTank3, bbWalls);
+    if (tank4.visible == true) checkCollisionsTankWall(tank4, bbTank4, bbWalls);
   }
 }
 
