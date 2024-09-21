@@ -4,7 +4,7 @@ import * as THREE from "three";
 function updateCameraPosition(camera, tank1, orbitControlsEnabled) {
   if (!orbitControlsEnabled) {
     const offsetX = 0; // Deslocamento lateral da câmera em relação ao tanque
-    const offsetY = 30; // Altura da câmera em relação ao tanque
+    const offsetY = 50; // Altura da câmera em relação ao tanque
     const offsetZ = 30; // Distância da câmera atrás do tanque
 
     // Pega a posição atual do tanque 1

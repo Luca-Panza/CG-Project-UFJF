@@ -22,7 +22,7 @@ import { ProgressBar } from "./components/barraDeVida.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
 import { shootCannon } from "./controls/tiroCanhao.js";
-import {createMovingWall, updateWalls} from "./components/wall.js";
+import { createMovingWall, updateWalls } from "./components/wall.js";
 
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
@@ -262,10 +262,30 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "o") {
     orbitControlsEnabled = !orbitControlsEnabled;
     orbit.enabled = orbitControlsEnabled;
-    if (!orbitControlsEnabled) {
-      camera.position.copy(prevCameraPosition);
-    } else {
+
+    if (orbitControlsEnabled) {
+      // Salva a posição anterior da câmera
       prevCameraPosition = camera.position.clone();
+
+      // Cria um vetor de direção para capturar onde a câmera estava olhando
+      const cameraDirection = new THREE.Vector3();
+      camera.getWorldDirection(cameraDirection);
+
+      // Define o foco do OrbitControls para onde a câmera estava apontando
+      const cameraTarget = new THREE.Vector3();
+      cameraTarget.copy(camera.position).add(cameraDirection.multiplyScalar(1000)); // Distância arbitrária para o foco
+
+      orbit.target.copy(cameraTarget);
+
+      // Habilita apenas o zoom e desabilita rotação e pan
+      orbit.enableRotate = false; // Desabilita rotação
+      orbit.enablePan = false; // Desabilita movimento de pan
+      orbit.enableZoom = true; // Habilita zoom
+
+
+      prevCameraPosition = camera.position.clone();
+    } else {
+      camera.position.copy(prevCameraPosition);
     }
   } else if (event.key === "1") {
     index = 0;
@@ -275,13 +295,13 @@ window.addEventListener("keydown", (event) => {
     index = 1;
     currentLevelIndex = 1;
     resetGame(index);
-  }
-  else if (event.key === "3") {
+  } else if (event.key === "3") {
     index = 2;
     currentLevelIndex = 2;
     resetGame(index);
   }
 });
+
 
 resetGame(index);
 
@@ -461,7 +481,7 @@ function render() {
         tank2.bbTank,
         tank3.tank.object,
         tank3.bbTank,
-        tank4.tank.object, 
+        tank4.tank.object,
         tank4.bbTank,
         bbWalls
       );
