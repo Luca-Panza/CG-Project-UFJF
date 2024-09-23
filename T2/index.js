@@ -1,12 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import {
-  initRenderer,
-  initCamera,
-  initDefaultBasicLight,
-  setDefaultMaterial,
-  createGroundPlaneXZ,
-} from "../libs/util/util.js";
+import { initRenderer, initCamera, initDefaultBasicLight, setDefaultMaterial, createGroundPlaneXZ } from "../libs/util/util.js";
 import { SecondaryBoxTopEsquerda } from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
@@ -22,8 +16,7 @@ import { ProgressBar } from "./components/barraDeVida.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
 import { shootCannon } from "./controls/tiroCanhao.js";
-import { createMovingWall, updateWalls } from "./components/wall.js";
-
+import { createMovingWall, updateWalls } from "./components/createMovingWalls.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -54,20 +47,47 @@ function updateGroundPlane(index) {
   if (existingPlane) scene.remove(existingPlane);
 
   // Ajusta o tamanho do plano de acordo com o nível
-  if (index === 2) { // Aqui usamos === para verificar o nível 3
-    planeWidth = 110;  // Aumenta o tamanho do plano para o nível 3
+  if (index === 2) {
+    // Aqui usamos === para verificar o nível 3
+    planeWidth = 110; // Aumenta o tamanho do plano para o nível 3
     planeHeight = 60;
   } else {
-    planeWidth = initialWidth;  // Para os outros níveis, mantemos o tamanho inicial
+    planeWidth = initialWidth; // Para os outros níveis, mantemos o tamanho inicial
     planeHeight = initialHeight;
   }
 
-  // Cria e adiciona o novo plano de fundo
-  const plane = createGroundPlaneXZ(planeWidth, planeHeight);
+  // Carregar a textura do chão
+  const textureLoader = new THREE.TextureLoader();
+  const floorTexture = textureLoader.load("/T2/assets/floorTextures/floorTexture.jpg");
+
+  // Ajustar o colorSpace para sRGB
+  floorTexture.colorSpace = THREE.SRGBColorSpace;
+
+  // Definir o wrapping para que a textura se repita
+  floorTexture.wrapS = THREE.RepeatWrapping;
+  floorTexture.wrapT = THREE.RepeatWrapping;
+
+  // Definir quantas vezes a textura deve se repetir para ter exatamente 5 unidades por imagem
+  floorTexture.repeat.set(planeWidth / 5, planeHeight / 5); // Ajuste a escala para 5 unidades por repetição
+
+  // Criar o material usando MeshStandardMaterial com a textura
+  const planeMaterial = new THREE.MeshStandardMaterial({ map: floorTexture });
+
+  // Cria a geometria do plano
+  const planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+
+  // Cria o plano de fundo com a geometria e o material
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+  // Rotaciona o plano para que fique horizontal no chão
+  plane.rotation.x = -Math.PI / 2;
+
+  // Nomeia o plano para referência futura
   plane.name = "groundPlane";
+
+  // Adiciona o plano à cena
   scene.add(plane);
 }
-
 
 function onWindowResize() {
   updateGroundPlane(index);
@@ -79,39 +99,42 @@ function createTank(color, position, rotation) {
   let bbTank = new THREE.Box3();
   let bbHelper;
 
-  return tank.loadTank().then((tankObject) => {
-    tankObject.position.copy(position);
-    tankObject.rotation.y = rotation;
+  return tank
+    .loadTank()
+    .then((tankObject) => {
+      tankObject.position.copy(position);
+      tankObject.rotation.y = rotation;
 
-    if (color !== "tanqueUsuario") {
-      tankObject.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshPhongMaterial({
-            color,
-            specular: 0x555555,
-            shininess: 30,
-          });
-        }
-      });
-    }
+      if (color !== "tanqueUsuario") {
+        tankObject.traverse((child) => {
+          if (child.isMesh) {
+            child.material = new THREE.MeshPhongMaterial({
+              color,
+              specular: 0x555555,
+              shininess: 30,
+            });
+          }
+        });
+      }
 
-    tank.object = tankObject;
-    scene.add(tankObject);
-    loadedTank = tankObject;
+      tank.object = tankObject;
+      scene.add(tankObject);
+      loadedTank = tankObject;
 
-    // Criando a barra de progresso
-    let pbarTank = new ProgressBar(tank.vida);
-    pbarTank.position.set(0, 6);
-    tankObject.add(pbarTank);
+      // Criando a barra de progresso
+      let pbarTank = new ProgressBar(tank.vida);
+      pbarTank.position.set(0, 6);
+      tankObject.add(pbarTank);
 
-    bbTank.setFromObject(tankObject);
-    bbHelper = createBBHelper(bbTank, "white");
-    // scene.add(bbHelper);
+      bbTank.setFromObject(tankObject);
+      bbHelper = createBBHelper(bbTank, "white");
+      // scene.add(bbHelper);
 
-    return { tank, bbTank, bbHelper, pbarTank };
-  }).catch((error) => {
-    console.error(`Erro ao adicionar o tanque à cena: ${error}`);
-  });
+      return { tank, bbTank, bbHelper, pbarTank };
+    })
+    .catch((error) => {
+      console.error(`Erro ao adicionar o tanque à cena: ${error}`);
+    });
 }
 
 function createRotatingCannon() {
@@ -190,49 +213,30 @@ function resetGame(index) {
   let tankPromises = [];
   if (index === 0) {
     light = initDefaultBasicLight(scene);
-    tankPromises.push(
-      createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI)
-    );
-    tankPromises.push(
-      createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI)
-    );
+    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI));
+    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI));
   } else if (index === 1) {
-    tankPromises.push(
-      createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360)
-    );
-    tankPromises.push(
-      createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
-    );
-    tankPromises.push(
-      createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI)
-    );
+    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360));
+    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360));
+    tankPromises.push(createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI));
 
     createLightsForLevel1(scene, renderer);
     createLampposts(scene);
 
     cannon = createRotatingCannon();
     scene.add(cannon);
-
   } else if (index === 2) {
     light = initDefaultBasicLight(scene);
-    createMovingWall(scene, new THREE.Vector3(2.5, 2.5, 0), 0, 0xFFA500);
-    createMovingWall(scene, new THREE.Vector3(-22.5, 2.5, 0), 0, 0xFFA500);
-    createMovingWall(scene, new THREE.Vector3(27.5, 2.5, 0), 0, 0xFFA500);
+    createMovingWall(scene, new THREE.Vector3(2.5, 2.5, 0), 0);
+    createMovingWall(scene, new THREE.Vector3(-22.5, 2.5, 0), 0);
+    createMovingWall(scene, new THREE.Vector3(27.5, 2.5, 0), 0);
 
     // Definição para o nível 3
-    tankPromises.push(
-      createTank("tanqueUsuario", new THREE.Vector3(-35, 0, 0), Math.PI / 2)
-    );
-    tankPromises.push(
-      createTank(0x0000ff, new THREE.Vector3(-10, 0, -20), Math.PI / 360)
-    );
-    tankPromises.push(
-      createTank(0xff0000, new THREE.Vector3(15, 0, 20), Math.PI)
-    );
+    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-35, 0, 0), Math.PI / 2));
+    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(-10, 0, -20), Math.PI / 360));
+    tankPromises.push(createTank(0xff0000, new THREE.Vector3(15, 0, 20), Math.PI));
 
-    tankPromises.push(
-      createTank(0xff00ff, new THREE.Vector3(40, 0, -20), Math.PI / 360)
-    );
+    tankPromises.push(createTank(0xff00ff, new THREE.Vector3(40, 0, -20), Math.PI / 360));
   }
 
   Promise.all(tankPromises).then((results) => {
@@ -252,7 +256,6 @@ function resetGame(index) {
     }
   });
 }
-
 
 init();
 
@@ -282,7 +285,6 @@ window.addEventListener("keydown", (event) => {
       orbit.enablePan = false; // Desabilita movimento de pan
       orbit.enableZoom = true; // Habilita zoom
 
-
       prevCameraPosition = camera.position.clone();
     } else {
       camera.position.copy(prevCameraPosition);
@@ -301,7 +303,6 @@ window.addEventListener("keydown", (event) => {
     resetGame(index);
   }
 });
-
 
 resetGame(index);
 
@@ -344,9 +345,7 @@ function verificaPlacar() {
       alert("Parabéns! Você venceu o jogo! Quer jogar novamente?");
       resetGame(1);
     }
-  }
-  else if (index === 2) {
-
+  } else if (index === 2) {
   }
 }
 
@@ -356,40 +355,10 @@ function render() {
 
   if (index === 0) {
     if (tank1 && tank2) {
-      keyboardUpdateTank1(
-        index,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank,
-        null,
-        null,
-      );
-      checkCollisions(
-        index,
-        tank1.tank.object,
-        tank1.bbTank,
-        tank2.tank.object,
-        tank2.bbTank,
-        null,
-        null,
-        null,
-        null,
-        bbWalls
-      );
-      updateCameraPosition(
-        camera,
-        tank1.tank.object,
-        orbitControlsEnabled
-      );
-      enemyTankBehavior(
-        index,
-        2,
-        tank2.tank,
-        tank2.bbTank,
-        tank1.tank,
-        tank1.bbTank
-      );
+      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, null, null);
+      checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, null, null, null, null, bbWalls);
+      updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
+      enemyTankBehavior(index, 2, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank);
 
       mostraNivel();
       verificaPlacar();
@@ -402,15 +371,7 @@ function render() {
         let targetBoundingBox = [tank1.bbTank, tank2.bbTank, tank3.bbTank];
         comportamentoCannon(cannon, targetTank, targetBoundingBox, index);
       }
-      keyboardUpdateTank1(
-        index,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank,
-        tank3.tank,
-        tank3.bbTank
-      );
+      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
       checkCollisions(
         index,
         tank1.tank.object,
@@ -423,55 +384,23 @@ function render() {
         null,
         bbWalls
       );
-      updateCameraPosition(
-        camera,
-        tank1.tank.object,
-        orbitControlsEnabled
-      );
+      updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
 
       if (tank2.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          2,
-          tank2.tank,
-          tank2.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank3.tank,
-          tank3.bbTank
-        );
+        enemyTankBehavior(index, 2, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank, tank3.tank, tank3.bbTank);
       }
 
       if (tank3.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          3,
-          tank3.tank,
-          tank3.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank2.tank,
-          tank2.bbTank
-        );
+        enemyTankBehavior(index, 3, tank3.tank, tank3.bbTank, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank);
       }
 
       mostraNivel();
       verificaPlacar();
       atualizaBarraDeVida();
     }
-  }
-
-  else if (index === 2) {
+  } else if (index === 2) {
     if (tank1 && tank2 && tank3 && tank4) {
-      keyboardUpdateTank1(
-        index,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank,
-        tank3.tank,
-        tank3.bbTank
-      );
+      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
 
       checkCollisions(
         index,
@@ -486,11 +415,7 @@ function render() {
         bbWalls
       );
 
-      updateCameraPosition(
-        camera,
-        tank1.tank.object,
-        orbitControlsEnabled
-      );
+      updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
 
       updateWalls(planeHeight);
 
