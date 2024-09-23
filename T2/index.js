@@ -41,6 +41,18 @@ function init() {
   updateGroundPlane(index);
 }
 
+/*
+//-- CREATING THE EQUIRECTANGULAR MAP ---------------------------------------------------------------------
+const textureLoader = new THREE.TextureLoader();
+
+let textureEquirec = textureLoader.load( '/T2/assets/crateTextures/skybox.jpg' );
+	textureEquirec.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
+	textureEquirec.colorSpace = THREE.SRGBColorSpace;
+
+// Set scene's background as a equirectangular map
+scene.background = textureEquirec;
+*/
+
 function updateGroundPlane(index) {
   // Remove o plano de fundo anterior se houver
   const existingPlane = scene.getObjectByName("groundPlane");
@@ -271,19 +283,19 @@ window.addEventListener("keydown", (event) => {
       prevCameraPosition = camera.position.clone();
 
       // Cria um vetor de direção para capturar onde a câmera estava olhando
-      const cameraDirection = new THREE.Vector3();
-      camera.getWorldDirection(cameraDirection);
+      //const cameraDirection = new THREE.Vector3();
+      //camera.getWorldDirection(cameraDirection);
 
       // Define o foco do OrbitControls para onde a câmera estava apontando
       const cameraTarget = new THREE.Vector3();
-      cameraTarget.copy(camera.position).add(cameraDirection.multiplyScalar(1000)); // Distância arbitrária para o foco
+     // cameraTarget.copy(camera.position).add(cameraDirection.multiplyScalar(1000)); // Distância arbitrária para o foco
 
-      orbit.target.copy(cameraTarget);
+     // orbit.target.copy(cameraTarget);
 
       // Habilita apenas o zoom e desabilita rotação e pan
-      orbit.enableRotate = false; // Desabilita rotação
-      orbit.enablePan = false; // Desabilita movimento de pan
-      orbit.enableZoom = true; // Habilita zoom
+      //orbit.enableRotate = false; // Desabilita rotação
+      //orbit.enablePan = false; // Desabilita movimento de pan
+      //orbit.enableZoom = true; // Habilita zoom
 
       prevCameraPosition = camera.position.clone();
     } else {
