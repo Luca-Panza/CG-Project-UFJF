@@ -70,9 +70,10 @@ function updateGroundPlane(index) {
 
   // Carregar a textura do chão
   const textureLoader = new THREE.TextureLoader();
-  const floorTexture = textureLoader.load("/T2/assets/floorTextures/floorTexture.jpg");
+  const floorTexturePath = `/T2/assets/floorTextures/floorTextureLevel${index + 1}.jpg`;
+  const floorTexture = textureLoader.load(floorTexturePath);
 
-  // Ajustar o colorSpace para sRGB
+  // Ajustar o colorSpace para sRGB no chão
   floorTexture.colorSpace = THREE.SRGBColorSpace;
 
   // Definir o wrapping para que a textura se repita
@@ -288,9 +289,9 @@ window.addEventListener("keydown", (event) => {
 
       // Define o foco do OrbitControls para onde a câmera estava apontando
       const cameraTarget = new THREE.Vector3();
-     // cameraTarget.copy(camera.position).add(cameraDirection.multiplyScalar(1000)); // Distância arbitrária para o foco
+      // cameraTarget.copy(camera.position).add(cameraDirection.multiplyScalar(1000)); // Distância arbitrária para o foco
 
-     // orbit.target.copy(cameraTarget);
+      // orbit.target.copy(cameraTarget);
 
       // Habilita apenas o zoom e desabilita rotação e pan
       //orbit.enableRotate = false; // Desabilita rotação
