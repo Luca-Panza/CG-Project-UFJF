@@ -8,18 +8,25 @@ let lastShootTime = 0;
 const shootInterval = 3000; // Intervalo de tempo em milissegundos (3 segundos)
 
 function shoot(canhao, targetTank, targetBoundingBox, index) {
-  // Ajuste as variáveis abaixo conforme necessário
-  const direction = new THREE.Vector3(1, 0, 0); // Direção do disparo
-  //   const direction = new THREE.Vector3();
-  //   canhao.getWorldDirection(direction);
+  // Direção do disparo baseada na orientação do canhão
+  const direction = new THREE.Vector3(0, 0, -1); // O eixo Z negativo geralmente representa a direção "para frente"
 
-  if (!direction || !targetTank || !targetBoundingBox) {
+  // Transforma a direção local do canhão em direção global
+  direction.applyQuaternion(canhao.quaternion);
+  direction.normalize(); // Normaliza a direção
+
+  if (!targetTank || !targetBoundingBox) {
     console.error("Variáveis necessárias não estão definidas");
     return;
   }
 
+  // Criação da bola
   const ball = new Ball(direction, targetTank, targetBoundingBox, index);
-  ball.object.position.set(0, 3, 0); // Ajuste a posição inicial da bola
+
+  // Ajuste a posição inicial da bola para sair da boca do canhão
+  ball.object.position.copy(canhao.position);
+  ball.object.position.y += 1; // Eleva a posição inicial da bola um pouco acima da posição do canhão
+
   ball.startMoving(true); // Inicia o movimento da bola
   ballsCannon.push(ball);
 }
@@ -28,14 +35,12 @@ function shootCannon(canhao, targetTank, targetBoundingBox, index) {
   // Dispara o canhão a cada 3 segundos
   const currentTime = performance.now();
   if (currentTime - lastShootTime >= shootInterval) {
-    shoot(canhao, targetTank, targetBoundingBox);
-    lastShootTime = currentTime; // Atualizar o tempo do último disparo
+    shoot(canhao, targetTank, targetBoundingBox, index);
+    lastShootTime = currentTime; // Atualiza o tempo do último disparo
   }
-  //   if (Date.now() % 3000 < 50) {
-  //     // Aproximação simples para intervalo
-  //     shoot(canhao, targetTank, targetBoundingBox);
-  //   }
+
   // Mover as bolas disparadas
   ballsCannon.forEach((ball) => ball.move());
 }
+
 export { shootCannon };
