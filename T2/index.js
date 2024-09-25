@@ -36,22 +36,25 @@ function init() {
   renderer = initRenderer();
   camera = initCamera(new THREE.Vector3(0, 15, 30));
   material = setDefaultMaterial();
+  
   orbit = new OrbitControls(camera, renderer.domElement);
   orbit.enabled = false;
+
+  // Ajusta os limites de rotação vertical para que a câmera não vire para baixo demais
+  orbit.minPolarAngle = Math.PI / 4;  // Limite mínimo (ângulo menor que isso impede olhar para baixo)
+  orbit.maxPolarAngle = Math.PI / 2.5; // Limite máximo (impede a câmera de virar completamente)
+
   updateGroundPlane(index);
 }
 
-/*
-//-- CREATING THE EQUIRECTANGULAR MAP ---------------------------------------------------------------------
+//-- CRIANDO O MAPA EQUIRETANGULAR ---------------------------------------------------------------------
 const textureLoader = new THREE.TextureLoader();
+let textureEquirec = textureLoader.load('./skybox.jpg');
+textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
+textureEquirec.colorSpace = THREE.SRGBColorSpace;
 
-let textureEquirec = textureLoader.load( '/T2/assets/crateTextures/skybox.jpg' );
-	textureEquirec.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
-	textureEquirec.colorSpace = THREE.SRGBColorSpace;
-
-// Set scene's background as a equirectangular map
+// Define o fundo da cena como o mapa equiretangular
 scene.background = textureEquirec;
-*/
 
 function updateGroundPlane(index) {
   // Remove o plano de fundo anterior se houver
@@ -60,45 +63,30 @@ function updateGroundPlane(index) {
 
   // Ajusta o tamanho do plano de acordo com o nível
   if (index === 2) {
-    // Aqui usamos === para verificar o nível 3
-    planeWidth = 110; // Aumenta o tamanho do plano para o nível 3
+    planeWidth = 110;
     planeHeight = 60;
   } else {
-    planeWidth = initialWidth; // Para os outros níveis, mantemos o tamanho inicial
+    planeWidth = initialWidth;
     planeHeight = initialHeight;
   }
 
-  // Carregar a textura do chão
   const textureLoader = new THREE.TextureLoader();
   const floorTexturePath = `/T2/assets/floorTextures/floorTextureLevel${index + 1}.jpg`;
   const floorTexture = textureLoader.load(floorTexturePath);
 
-  // Ajustar o colorSpace para sRGB no chão
   floorTexture.colorSpace = THREE.SRGBColorSpace;
-
-  // Definir o wrapping para que a textura se repita
   floorTexture.wrapS = THREE.RepeatWrapping;
   floorTexture.wrapT = THREE.RepeatWrapping;
 
-  // Definir quantas vezes a textura deve se repetir para ter exatamente 5 unidades por imagem
-  floorTexture.repeat.set(planeWidth / 5, planeHeight / 5); // Ajuste a escala para 5 unidades por repetição
+  floorTexture.repeat.set(planeWidth / 5, planeHeight / 5);
 
-  // Criar o material usando MeshStandardMaterial com a textura
   const planeMaterial = new THREE.MeshStandardMaterial({ map: floorTexture });
-
-  // Cria a geometria do plano
   const planeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
-
-  // Cria o plano de fundo com a geometria e o material
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-  // Rotaciona o plano para que fique horizontal no chão
   plane.rotation.x = -Math.PI / 2;
-
-  // Nomeia o plano para referência futura
   plane.name = "groundPlane";
 
-  // Adiciona o plano à cena
   scene.add(plane);
 }
 
