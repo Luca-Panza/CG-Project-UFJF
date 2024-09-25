@@ -13,6 +13,8 @@ const rotateAngle = (Math.PI / 2) * 0.02;
 // Paredes e caixas de colisão
 const walls = [];
 const bbWalls = [];
+const movingWalls = [];
+const bbMovingWalls = [];
 
 // Matriz para Nível 2
 const levels = [
@@ -64,4 +66,14 @@ const levels = [
   ],
 ];
 
-export { moveDistance, rotateAngle, levels, scene, walls, bbWalls, currentLevelIndex };
+export {
+  moveDistance,
+  rotateAngle,
+  levels,
+  scene,
+  walls,
+  bbWalls,
+  bbMovingWalls,
+  movingWalls,
+  currentLevelIndex,
+};

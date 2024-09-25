@@ -14,7 +14,14 @@ import { buildTutorial } from "./controls/tutorialControl.js";
 import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
 import { createBBHelper } from "./helpers/bbHelper.js";
-import { levels, scene, walls, bbWalls } from "./constants/constants.js";
+import {
+  levels,
+  scene,
+  walls,
+  bbWalls,
+  bbMovingWalls,
+  movingWalls,
+} from "./constants/constants.js";
 import { TankImport } from "./components/importTank.js";
 import { createLampposts } from "./components/importLamp.js";
 import { createLightsForLevel1 } from "./components/createLight.js";
@@ -485,7 +492,9 @@ function render() {
         null,
         null,
         null,
-        bbWalls
+        bbWalls,
+        null,
+        null
       );
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
       enemyTankBehavior(
@@ -527,7 +536,9 @@ function render() {
         tank3.bbTank,
         null,
         null,
-        bbWalls
+        bbWalls,
+        null,
+        null
       );
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
 
@@ -583,7 +594,9 @@ function render() {
         tank3.bbTank,
         tank4.tank.object,
         tank4.bbTank,
-        bbWalls
+        bbWalls,
+        movingWalls,
+        bbMovingWalls
       );
 
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
