@@ -8,6 +8,8 @@ export class TankImport {
     this.rotationY = rotationY;
     this.object = null;
     this.vida = 10;
+    this.danoTiro = 1;
+    this.godMode = false;
 
     // chamar essa função aqui estava causando o erro de carregamento pois estava sendo feito a mudança da posição do tanque duas vezes
     // this.loadTank()

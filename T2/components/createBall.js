@@ -55,8 +55,10 @@ export class Ball {
   checkCollisionsTankInimigo(tankInimigo, bbTankInimigo) {
     if (bbTankInimigo.intersectsBox(this.bbBall)) {
       if (!this.ballHasBeenHit) {
-        tankInimigo.vida = tankInimigo.vida - 1;
-        this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhão inimigo
+        if (!tankInimigo.godMode) {
+          tankInimigo.vida = tankInimigo.vida - 1;
+          this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhão inimigo
+        }
       }
       this.destroy();
     }

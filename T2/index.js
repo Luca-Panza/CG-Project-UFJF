@@ -33,10 +33,14 @@ import {
   createMovingWall,
   updateWalls,
 } from "./components/createMovingWalls.js";
+import { InfoBox2 } from "./util/util.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
+let godModeEnabled = false;
 let currentLevelIndex = 0;
+
+let mensagem = new InfoBox2();
 
 const initialWidth = 85;
 const initialHeight = 60;
@@ -290,6 +294,10 @@ function clearPreviousLevel() {
 }
 
 function resetGame(index) {
+  // resetando o GodMode
+  godModeEnabled = false;
+  mensagem.clear();
+
   console.log("Removendo todos os objetos da cena...");
   while (scene.children.length > 0) {
     const child = scene.children[0];
@@ -377,6 +385,21 @@ function resetGame(index) {
 
 init();
 
+function Godmode() {
+  godModeEnabled = !godModeEnabled;
+
+  // Limpa o conteúdo anterior da mensagem
+  mensagem.clear();
+
+  if (godModeEnabled) {
+    mensagem.add("God mode Ativado");
+    tank1.tank.godMode = true;
+  } else {
+    tank1.tank.godMode = false;
+  }
+  mensagem.show();
+}
+
 window.addEventListener("resize", onWindowResize, false);
 
 window.addEventListener("keydown", (event) => {
@@ -419,6 +442,8 @@ window.addEventListener("keydown", (event) => {
     index = 2;
     currentLevelIndex = 2;
     resetGame(index);
+  } else if (event.key === "g") {
+    Godmode();
   }
 });
 

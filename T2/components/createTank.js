@@ -8,15 +8,7 @@ export class Tank {
     this.object = this.createTank(this.bodyColor, this.position);
     this.vida = 10;
     this.danoTiro = 1;
-    // this.bbBall = new THREE.Box3();
-    // this.bbBall.setFromObject(this.object);
-    // this.object.previousPosition = this.object.position.clone();
-    // this.collisionCount = 0; // Contador de colisões
-    // //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
-    // this.tanqueInimigo = tanqueInimigo;
-    // this.bbTankInimigo = bbTankInimigo;
-    // scene.add(this.bbHelper1);
-    // scene.add(this.object);
+    this.godMode = false;
   }
 
   setPosition(position) {
