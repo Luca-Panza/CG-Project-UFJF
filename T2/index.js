@@ -84,7 +84,7 @@ function updateGroundPlane(index) {
   // Ajusta o tamanho do plano de acordo com o nível
   if (index === 2) {
     planeWidth = 110;
-    planeHeight = 60;
+    planeHeight = 76;
   } else {
     planeWidth = initialWidth;
     planeHeight = initialHeight;

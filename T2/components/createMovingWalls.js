@@ -53,8 +53,8 @@ function updateWalls() {
 
     // Verificar os limites e inverter a direção
     if (
-      wall.position.z > planeHeight / 12 ||
-      wall.position.z < -planeHeight / 12
+      wall.position.z > planeHeight / 4.7 ||
+      wall.position.z < -planeHeight / 4.7
     ) {
       entry.direction *= -1;
     }

@@ -31,20 +31,31 @@ function checkCollisionsTankWall(tank, bbTank, bbWalls) {
 }
 
 // Função que verifica colisões entre tanques e paredes móveis
-function checkCollisionsTankMovingWall(
-  tank,
-  bbTank,
-  movingWalls,
-  bbMovingWalls
-) {
-  bbMovingWalls.forEach((entry) => {
-    if (entry.intersectsBox(bbTank)) {
-      // Em caso de colisão, restaura a posição antiga
-      tank.position.copy(tank.previousPosition); // Restaura a posição do tanque
+function checkCollisionsTankMovingWall(tank, bbTank, movingWalls, bbMovingWalls) {
+  for (let i = 0; i < movingWalls.length; i++) {
+    const movingWall = movingWalls[i]; // Parede móvel atual
+    const bbMovingWall = bbMovingWalls[i]; // Bounding box da parede móvel atual
+
+    if (bbMovingWall.intersectsBox(bbTank)) {
+      const moveDirection = new THREE.Vector3().subVectors(
+        tank.position,
+        tank.previousPosition
+      );
+
+      // Se a parede móvel tiver uma normal definida, podemos ajustar a posição como nas paredes estáticas
+      if (movingWall.normal) {
+        const adjustment = moveDirection.projectOnPlane(movingWall.normal); // Projeta o movimento na direção perpendicular à normal
+        tank.position.copy(tank.previousPosition).add(adjustment); // Ajusta a posição com base na projeção
+      } else {
+        // Se não houver normal, apenas restauramos a posição anterior
+        tank.position.copy(tank.previousPosition); // Restaura a posição do tanque
+      }
+
       bbTank.setFromObject(tank); // Atualiza o bounding box do tanque
     }
-  });
+  }
 }
+
 
 function checkCollisions(
   index,
