@@ -442,28 +442,71 @@ function atualizaBarraDeVida() {
 function verificaPlacar() {
   if (index === 0) {
     if (tank1.tank.vida <= 0) {
+      tank1.tank.vida = 10;
+      tank2.tank.vida = 10;
       alert("Você perdeu! Tente novamente.");
       resetGame(0);
     } else if (tank2.tank.vida <= 0) {
+      tank1.tank.vida = 10;
+      tank2.tank.vida = 10;
+      index = 1;
+      currentLevelIndex = 1;
       alert("Parabéns! Você venceu o nível 1! Está pronto para o nível 2?");
       resetGame(1);
     }
   } else if (index === 1) {
     if (tank1.tank.vida <= 0) {
+      tank1.tank.vida = 10;
+      tank2.tank.vida = 10;
+      tank3.tank.vida = 10;
       alert("Você perdeu! Tente novamente.");
       resetGame(1);
     }
-    if (tank2.tank.vida <= 0 && tank3.tank.vida > 0) {
+    if (tank2.tank.vida <= 0 && tank3.tank.vida <= 0) {
+      tank1.tank.vida = 10;
+      tank2.tank.vida = 10;
+      tank3.tank.vida = 10;
+      index = 2;
+      currentLevelIndex = 2;
+      alert("Parabéns! Você venceu o nível 2! Está pronto para o nível 3?");
+      resetGame(2);
+    }
+    if (tank2.tank.vida <= 0) {
       tank2.tank.object.visible = false;
     }
-    if (tank3.tank.vida <= 0 && tank2.tank.vida > 0) {
+    if (tank3.tank.vida <= 0) {
       tank3.tank.object.visible = false;
     }
-    if (tank2.tank.vida <= 0 && tank3.tank.vida <= 0) {
-      alert("Parabéns! Você venceu o jogo! Quer jogar novamente?");
-      resetGame(1);
-    }
   } else if (index === 2) {
+    if (tank1.tank.vida <= 0) {
+      tank1.tank.vida = 10;
+      tank2.tank.vida = 10;
+      tank3.tank.vida = 10;
+      tank4.tank.vida = 10;
+      alert("Você perdeu! Tente novamente.");
+      resetGame(2);
+    }
+
+    if (tank2.tank.vida <= 0 && tank3.tank.vida <= 0 && tank4.tank.vida <= 0) {
+      tank1.tank.vida = 10;
+      tank2.tank.vida = 10;
+      tank3.tank.vida = 10;
+      tank4.tank.vida = 10;
+      index = 0;
+      currentLevelIndex = 0;
+      alert("Parabéns! Você venceu o jogo! Quer jogar novamente?");
+      resetGame(0);
+    }
+
+    if (tank2.tank.vida <= 0) {
+      tank2.tank.object.visible = false;
+    }
+    if (tank3.tank.vida) {
+      tank3.tank.object.visible = false;
+    }
+    if (tank4.tank.vida) {
+      tank4.tank.object.visible = false;
+    }
   }
 }
 

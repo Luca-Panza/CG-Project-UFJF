@@ -7,6 +7,7 @@ export class Tank {
     this.position = position;
     this.object = this.createTank(this.bodyColor, this.position);
     this.vida = 10;
+    this.danoTiro = 1;
     // this.bbBall = new THREE.Box3();
     // this.bbBall.setFromObject(this.object);
     // this.object.previousPosition = this.object.position.clone();
