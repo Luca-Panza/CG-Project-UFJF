@@ -599,6 +599,50 @@ function render() {
         bbMovingWalls
       );
 
+      if (tank2.tank.object.visible) {
+        enemyTankBehavior(
+          index,
+          2,
+          tank2.tank,
+          tank2.bbTank,
+          tank1.tank,
+          tank1.bbTank,
+          tank3.tank,
+          tank3.bbTank,
+          tank4.tank,
+          tank4.bbTank
+        );
+      }
+
+      if (tank3.tank.object.visible) {
+        enemyTankBehavior(
+          index,
+          3,
+          tank3.tank,
+          tank3.bbTank,
+          tank1.tank,
+          tank1.bbTank,
+          tank2.tank,
+          tank2.bbTank,
+          tank4.tank,
+          tank4.bbTank
+        );
+      }
+      if (tank4.tank.object.visible) {
+        enemyTankBehavior(
+          index,
+          4,
+          tank4.tank,
+          tank4.bbTank,
+          tank1.tank,
+          tank1.bbTank,
+          tank2.tank,
+          tank2.bbTank,
+          tank3.tank,
+          tank3.bbTank
+        );
+      }
+
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
 
       updateWalls(planeHeight);

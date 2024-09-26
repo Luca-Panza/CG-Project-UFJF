@@ -7,6 +7,7 @@ const ballsTank = [];
 // Variável para armazenar o tempo do último disparo
 let lastShootTime2 = 0;
 let lastShootTime3 = 0;
+let lastShootTime4 = 0;
 const shootInterval = 2000; // Intervalo de tempo em milissegundos (2 segundos)
 
 // Função de disparo
@@ -16,7 +17,9 @@ function shoot(
   tankUsuario,
   bbTankUsuario,
   tankInimigo2,
-  bbtankInimigo2
+  bbtankInimigo2,
+  tankInimigo3,
+  bbtankInimigo3
 ) {
   // Lógica do Tiro
   const direction = new THREE.Vector3();
@@ -33,7 +36,10 @@ function shoot(
     targetBoundingBox = bbTankUsuario;
   } else if (index === 1) {
     targetTank = [tankUsuario, tankInimigo2];
-    targetBoundingBox = [bbTankUsuario, bbtankInimigo2];
+    targetBoundingBox = [bbTankUsuario, bbtankInimigo2, bbtankInimigo3];
+  } else if (index === 2) {
+    targetTank = [tankUsuario, tankInimigo2, tankInimigo3];
+    targetBoundingBox = [bbTankUsuario, bbtankInimigo2, bbtankInimigo3];
   }
 
   const ball = new Ball(direction, targetTank, targetBoundingBox, index);
@@ -52,7 +58,9 @@ function enemyTankBehavior(
   tankUsuario,
   bbTankUsuario,
   tankInimigo2 = null,
-  bbtankInimigo2 = null
+  bbtankInimigo2 = null,
+  tankInimigo3 = null,
+  bbtankInimigo3 = null
 ) {
   const speed = 0.1;
   const backwardSpeed = speed; // Velocidade de movimentação para trás
@@ -91,11 +99,13 @@ function enemyTankBehavior(
         tankUsuario,
         bbTankUsuario,
         tankInimigo2,
-        bbtankInimigo2
+        bbtankInimigo2,
+        tankInimigo3,
+        bbtankInimigo3
       );
       lastShootTime2 = currentTime2; // Atualizar o tempo do último disparo
     }
-  } else {
+  } else if (numTank == 3) {
     const currentTime3 = performance.now();
     if (currentTime3 - lastShootTime3 >= shootInterval) {
       shoot(
@@ -104,9 +114,26 @@ function enemyTankBehavior(
         tankUsuario,
         bbTankUsuario,
         tankInimigo2,
-        bbtankInimigo2
+        bbtankInimigo2,
+        tankInimigo3,
+        bbtankInimigo3
       );
       lastShootTime3 = currentTime3; // Atualizar o tempo do último disparo
+    }
+  } else {
+    const currentTime4 = performance.now();
+    if (currentTime4 - lastShootTime4 >= shootInterval) {
+      shoot(
+        tank,
+        index,
+        tankUsuario,
+        bbTankUsuario,
+        tankInimigo2,
+        bbtankInimigo2,
+        tankInimigo3,
+        bbtankInimigo3
+      );
+      lastShootTime4 = currentTime4; // Atualizar o tempo do último disparo
     }
   }
 
