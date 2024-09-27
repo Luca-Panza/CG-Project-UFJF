@@ -1,35 +1,32 @@
 import * as THREE from "three";
 import { levels } from "../constants/constants.js"; // Importa a matriz de níveis
 
-let capsule = null;
-let capsuleBoundingBox = null; // Variável para armazenar o bounding box da cápsula
+let icosahedronPowerUp = null;
+let icosahedronBoundingBox = null; // Variável para armazenar o bounding box do icosaedro
 
-// Função que cria a cápsula de power-up no ambiente
-function createCapsule(scene) {
-  const geometry = new THREE.CapsuleGeometry(0.5, 1, 10, 20);
+// Função que cria o icosaedro de power-up no ambiente
+function createIcosahedronPowerUp(scene) {
+  const geometry = new THREE.IcosahedronGeometry(1, 0);
   const material = new THREE.MeshPhongMaterial({
-    color: 0x00ff00, // Cor verde
-    emissive: 0x00ff00, // Cor emissiva (brilho verde)
+    color: 0xff0000, // Cor vermelha
+    emissive: 0xff0000, // Cor emissiva (brilho vermelho)
     emissiveIntensity: 0.5, // Intensidade do brilho
     shininess: 100, // Brilho especular
   });
 
-  capsule = new THREE.Mesh(geometry, material);
+  icosahedronPowerUp = new THREE.Mesh(geometry, material);
 
-  // Inclina a cápsula para evidenciar a rotação
-  capsule.rotation.z = Math.PI / 4;
-
-  // Posiciona a cápsula em uma posição válida
+  // Posiciona o icosaedro em uma posição válida
   const position = getRandomValidPosition();
-  capsule.position.copy(position);
+  icosahedronPowerUp.position.copy(position);
 
-  // Cria o BoundingBox da cápsula
-  capsuleBoundingBox = new THREE.Box3().setFromObject(capsule);
+  // Cria o BoundingBox do icosaedro
+  icosahedronBoundingBox = new THREE.Box3().setFromObject(icosahedronPowerUp);
 
-  // Adiciona a cápsula à cena
-  scene.add(capsule);
+  // Adiciona o icosaedro à cena
+  scene.add(icosahedronPowerUp);
 
-  return capsule;
+  return icosahedronPowerUp;
 }
 
 let lastPosition = null; // Variável para armazenar a última posição utilizada
@@ -77,21 +74,26 @@ function getRandomValidPosition() {
   }
 }
 
-// Função para rotacionar a cápsula lentamente
-function rotateCapsule() {
-  if (capsule) {
-    capsule.rotation.y += 0.01; // Animação de rotação
-    capsuleBoundingBox.setFromObject(capsule); // Atualiza o bounding box conforme a cápsula rotaciona
+// Função para rotacionar o icosaedro lentamente
+function rotateIcosahedronPowerUp() {
+  if (icosahedronPowerUp) {
+    icosahedronPowerUp.rotation.y += 0.01; // Animação de rotação
+    icosahedronBoundingBox.setFromObject(icosahedronPowerUp); // Atualiza o bounding box conforme o icosaedro rotaciona
   }
 }
 
-// Função para remover a cápsula da cena
-function removeCapsule(scene) {
-  if (capsule) {
-    scene.remove(capsule);
-    capsule = null;
-    capsuleBoundingBox = null; // Remove o bounding box junto com a cápsula
+// Função para remover o icosaedro da cena
+function removeIcosahedronPowerUp(scene) {
+  if (icosahedronPowerUp) {
+    scene.remove(icosahedronPowerUp);
+    icosahedronPowerUp = null;
+    icosahedronBoundingBox = null; // Remove o bounding box junto com o icosaedro
   }
 }
 
-export { createCapsule, rotateCapsule, removeCapsule, capsuleBoundingBox };
+export {
+  createIcosahedronPowerUp,
+  rotateIcosahedronPowerUp,
+  removeIcosahedronPowerUp,
+  icosahedronBoundingBox,
+};
