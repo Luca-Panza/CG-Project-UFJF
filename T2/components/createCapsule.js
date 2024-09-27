@@ -5,7 +5,7 @@ let capsule = null;
 let capsuleBoundingBox = null; // Variável para armazenar o bounding box da cápsula
 
 // Função que cria a cápsula de power-up no ambiente
-function createCapsule(scene) {
+function createCapsule(scene, index) {
   const geometry = new THREE.CapsuleGeometry(0.5, 1, 10, 20);
   const material = new THREE.MeshPhongMaterial({
     color: 0x00ff00, // Cor verde
@@ -20,7 +20,7 @@ function createCapsule(scene) {
   capsule.rotation.z = Math.PI / 4;
 
   // Posiciona a cápsula em uma posição válida
-  const position = getRandomValidPosition();
+  const position = getRandomValidPosition(index); // Passa o nível atual
   capsule.position.copy(position);
 
   // Cria o BoundingBox da cápsula
@@ -34,9 +34,9 @@ function createCapsule(scene) {
 
 let lastPosition = null; // Variável para armazenar a última posição utilizada
 
-// Função que retorna uma posição válida e randômica com base no último nível
-function getRandomValidPosition() {
-  const levelMap = levels[levels.length - 1]; // Obtém a matriz do último nível
+// Função que retorna uma posição válida e randômica com base no nível atual
+function getRandomValidPosition(index) {
+  const levelMap = levels[index]; // Obtém a matriz do nível atual
   const validPositions = [];
   const minDistance = 10; // Distância mínima para evitar repetição de posições muito próximas
 
@@ -65,16 +65,10 @@ function getRandomValidPosition() {
     }
   }
 
-  // Verifica se existem posições válidas para escolher
-  if (validPositions.length > 0) {
-    // Escolhe uma posição aleatória da lista de posições válidas
-    const randomIndex = Math.floor(Math.random() * validPositions.length);
-    lastPosition = validPositions[randomIndex]; // Armazena a nova posição como a última utilizada
-    return validPositions[randomIndex];
-  } else {
-    // Se não houver posições válidas (o que é improvável), retorna a última posição
-    return lastPosition;
-  }
+  // Escolhe uma posição aleatória da lista de posições válidas
+  const randomIndex = Math.floor(Math.random() * validPositions.length);
+  lastPosition = validPositions[randomIndex]; // Armazena a nova posição como a última utilizada
+  return validPositions[randomIndex];
 }
 
 // Função para rotacionar a cápsula lentamente

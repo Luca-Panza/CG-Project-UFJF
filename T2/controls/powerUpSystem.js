@@ -17,7 +17,25 @@ let capsule = null;
 let icosahedronPowerUp = null;
 let currentPowerUp = null; // Controla qual power-up está ativo
 
-function updatePowerUpSystem(scene, bbTank) {
+function clearAllPowerUps(scene) {
+  // Remove a cápsula, se existir
+  if (capsule) {
+    removeCapsule(scene);
+    capsule = null;
+  }
+
+  // Remove o icosaedro, se existir
+  if (icosahedronPowerUp) {
+    removeIcosahedronPowerUp(scene);
+    icosahedronPowerUp = null;
+  }
+
+  // Zera a referência ao power-up atual
+  currentPowerUp = null;
+  console.log("Power-ups removidos e reinicializados");
+}
+
+function updatePowerUpSystem(scene, bbTank, index) {
   const currentTime = Date.now();
 
   // Verifica colisão com o power-up atual
@@ -43,10 +61,10 @@ function updatePowerUpSystem(scene, bbTank) {
     const randomPowerUp = Math.random() > 0.5 ? "capsule" : "icosahedron"; // Escolhe um power-up aleatório
 
     if (randomPowerUp === "capsule") {
-      capsule = createCapsule(scene);
+      capsule = createCapsule(scene, index); // Passa o nível atual
       currentPowerUp = "capsule";
     } else {
-      icosahedronPowerUp = createIcosahedronPowerUp(scene);
+      icosahedronPowerUp = createIcosahedronPowerUp(scene, index); // Passa o nível atual
       currentPowerUp = "icosahedron";
     }
     lastPowerUpTime = currentTime;
@@ -60,4 +78,4 @@ function updatePowerUpSystem(scene, bbTank) {
   }
 }
 
-export { updatePowerUpSystem };
+export { updatePowerUpSystem, clearAllPowerUps };
