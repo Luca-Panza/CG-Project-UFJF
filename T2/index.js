@@ -38,6 +38,7 @@ import {
   updateWalls,
 } from "./components/createMovingWalls.js";
 import { InfoBox2 } from "./util/util.js";
+import { updatePowerUpSystem } from "./controls/powerUpSystem.js";
 
 let renderer, camera, material, light, orbit, prevCameraPosition;
 let orbitControlsEnabled = false;
@@ -649,6 +650,8 @@ function render() {
       atualizaBarraDeVida();
     }
   } else if (index === 2) {
+    // Atualiza o sistema de power-ups
+    updatePowerUpSystem(scene, tank1.bbTank);
     if (tank1 && tank2 && tank3 && tank4) {
       keyboardUpdateTank1(
         index,
