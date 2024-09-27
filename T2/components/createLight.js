@@ -1,5 +1,32 @@
 import * as THREE from "three";
 
+function createLightsForLevel0(scene, renderer) {
+  // Criação da luz direcional
+  const directionalLight = new THREE.DirectionalLight("white", 1);
+  directionalLight.position.set(-40, 25, -28); // Posição da luz
+  directionalLight.castShadow = true; // Habilita a projeção de sombras
+  scene.add(directionalLight); // Adiciona a luz à cena
+
+  // Configuração do shadow map para aumentar a área de projeção de sombras
+  directionalLight.shadow.camera.near = 0.1; // Define o quão perto os objetos podem estar para gerar sombras
+  directionalLight.shadow.camera.far = 100; // Define a distância máxima para gerar sombras
+  directionalLight.shadow.camera.left = -50; // Aumenta a área da câmera ortográfica para a esquerda
+  directionalLight.shadow.camera.right = 50; // Aumenta a área da câmera ortográfica para a direita
+  directionalLight.shadow.camera.top = 50; // Aumenta a área da câmera ortográfica para cima
+  directionalLight.shadow.camera.bottom = -50; // Aumenta a área da câmera ortográfica para baixo
+
+  // Aumentando a resolução do shadow map para sombras mais detalhadas
+  directionalLight.shadow.mapSize.width = 2048; // Resolução horizontal das sombras
+  directionalLight.shadow.mapSize.height = 2048; // Resolução vertical das sombras
+
+  // Criação de um helper para visualizar a luz
+  const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5); // O segundo parâmetro define o tamanho do helper
+  scene.add(lightHelper); // Adiciona o helper à cena
+
+  renderer.shadowMap.enabled = true; // Habilita sombras
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Define o tipo de sombras
+}
+
 function createLightsForLevel1(scene, renderer) {
   // Criação da luz ambiente
   const ambientColor = "rgb(50,50,50)";
@@ -23,8 +50,8 @@ function createLightsForLevel1(scene, renderer) {
     spotLight.distance = 100; // Distância máxima de alcance da luz
     spotLight.castShadow = true; // Habilita a projeção de sombras
 
-    spotLight.shadow.mapSize.width = 120; // Aumenta a resolução do mapa de sombras
-    spotLight.shadow.mapSize.height = 120;
+    spotLight.shadow.mapSize.width = 2048; // Aumenta a resolução do mapa de sombras
+    spotLight.shadow.mapSize.height = 2048;
 
     spotLight.target.position.copy(targetPosition); // Define o alvo da luz
     scene.add(spotLight); // Adiciona a luz à cena
@@ -48,4 +75,30 @@ function createLightsForLevel1(scene, renderer) {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Define o tipo de sombras
 }
 
-export { createLightsForLevel1 };
+function createLightsForLevel2(scene, renderer) {
+  // Criação da luz direcional
+  const directionalLight = new THREE.DirectionalLight("white", 1);
+  directionalLight.position.set(-40, 25, -28); // Posição da luz
+  directionalLight.castShadow = true; // Habilita a projeção de sombras
+  scene.add(directionalLight); // Adiciona a luz à cena
+
+  // Configuração do shadow map para aumentar a área de projeção de sombras
+  directionalLight.shadow.camera.near = 0.1; // Define o quão perto os objetos podem estar para gerar sombras
+  directionalLight.shadow.camera.far = 100; // Define a distância máxima para gerar sombras
+  directionalLight.shadow.camera.left = -50; // Aumenta a área da câmera ortográfica para a esquerda
+  directionalLight.shadow.camera.right = 50; // Aumenta a área da câmera ortográfica para a direita
+  directionalLight.shadow.camera.top = 50; // Aumenta a área da câmera ortográfica para cima
+  directionalLight.shadow.camera.bottom = -50; // Aumenta a área da câmera ortográfica para baixo
+
+  directionalLight.shadow.mapSize.width = 2048; // Resolução horizontal das sombras
+  directionalLight.shadow.mapSize.height = 2048; // Resolução vertical das sombras
+
+  // Criação de um helper para visualizar a luz
+  const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+  scene.add(lightHelper);
+
+  renderer.shadowMap.enabled = true; // Habilita sombras
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Define o tipo de sombras
+}
+
+export { createLightsForLevel0, createLightsForLevel1, createLightsForLevel2 };
