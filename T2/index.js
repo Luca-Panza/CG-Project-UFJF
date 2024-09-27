@@ -573,7 +573,7 @@ function render() {
   requestAnimationFrame(render);
   renderer.render(scene, camera);
 
-  updatePowerUpSystem(scene, tank1.bbTank, index); // Passa o nível atual (index)
+  updatePowerUpSystem(scene, tank1.tank, tank1.bbTank, index); // Passa o nível atual (index)
 
   if (index === 0) {
     if (tank1 && tank2) {

@@ -35,11 +35,15 @@ function clearAllPowerUps(scene) {
   console.log("Power-ups removidos e reinicializados");
 }
 
-function updatePowerUpSystem(scene, bbTank, index) {
+function updatePowerUpSystem(scene, tank, bbTank, index) {
   const currentTime = Date.now();
 
   // Verifica colisão com o power-up atual
   if (currentPowerUp === "capsule" && checkPowerUpCollision(bbTank)) {
+    tank.vida = tank.vida * 1.2;
+    if (tank.vida > 10) {
+      tank.vida = 10;
+    }
     removeCapsule(scene);
     capsule = null;
     lastPowerUpTime = currentTime;
@@ -47,6 +51,7 @@ function updatePowerUpSystem(scene, bbTank, index) {
     currentPowerUp === "icosahedron" &&
     checkIcosahedronPowerUpCollision(bbTank)
   ) {
+    tank.danoTiro = 2;
     removeIcosahedronPowerUp(scene);
     icosahedronPowerUp = null;
     lastPowerUpTime = currentTime;
@@ -58,6 +63,8 @@ function updatePowerUpSystem(scene, bbTank, index) {
     !icosahedronPowerUp &&
     currentTime - lastPowerUpTime > powerUpCooldown
   ) {
+    // retorna com o dano = 1 depois de 10 segundos
+    tank.danoTiro = 1;
     const randomPowerUp = Math.random() > 0.5 ? "capsule" : "icosahedron"; // Escolhe um power-up aleatório
 
     if (randomPowerUp === "capsule") {

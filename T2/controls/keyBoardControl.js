@@ -57,7 +57,13 @@ function keyboardUpdateTank1(
       targetBoundingBox = [bbTankInimigo2, bbTankInimigo3, bbTankInimigo4];
     }
 
-    const ball = new Ball(direction, targetTank, targetBoundingBox, index);
+    const ball = new Ball(
+      direction,
+      targetTank,
+      targetBoundingBox,
+      index,
+      tank1
+    );
     ball.object.position.set(
       tank1.object.position.x,
       3,

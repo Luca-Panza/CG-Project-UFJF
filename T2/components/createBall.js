@@ -2,7 +2,13 @@ import * as THREE from "three";
 import { scene, bbWalls } from "../constants/constants.js";
 //-- Ball Class -----------------------------------------------------------
 export class Ball {
-  constructor(direction, tankInimigo, bbTankInimigo, index) {
+  constructor(
+    direction,
+    tankInimigo,
+    bbTankInimigo,
+    index,
+    tankUsuario = null
+  ) {
     this.speed = 0.5;
     this.moveOn = true;
     this.direction = direction;
@@ -15,6 +21,7 @@ export class Ball {
     //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
     this.tankInimigo = tankInimigo;
     this.bbTankInimigo = bbTankInimigo;
+    this.tankUsuario = tankUsuario;
     this.index = index;
     scene.add(this.bbHelper1);
     scene.add(this.object);
@@ -56,8 +63,12 @@ export class Ball {
     if (bbTankInimigo.intersectsBox(this.bbBall)) {
       if (!this.ballHasBeenHit) {
         if (!tankInimigo.godMode) {
-          tankInimigo.vida = tankInimigo.vida - 1;
-          this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no canhão inimigo
+          if (this.tankUsuario && this.tankUsuario.danoTiro == 2) {
+            tankInimigo.vida = tankInimigo.vida - 2;
+          } else {
+            tankInimigo.vida = tankInimigo.vida - 1;
+          }
+          this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no tanque inimigo
         }
       }
       this.destroy();
