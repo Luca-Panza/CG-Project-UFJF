@@ -526,10 +526,10 @@ function verificaPlacar() {
     if (tank2.tank.vida <= 0) {
       tank2.tank.object.visible = false;
     }
-    if (tank3.tank.vida) {
+    if (tank3.tank.vida <= 0) {
       tank3.tank.object.visible = false;
     }
-    if (tank4.tank.vida) {
+    if (tank4.tank.vida <= 0) {
       tank4.tank.object.visible = false;
     }
   }
