@@ -8,23 +8,19 @@ function createLightsForLevel0(scene, renderer) {
   scene.add(directionalLight); // Adiciona a luz à cena
 
   // Configuração do shadow map para aumentar a área de projeção de sombras
-  directionalLight.shadow.camera.near = 0.1; // Define o quão perto os objetos podem estar para gerar sombras
-  directionalLight.shadow.camera.far = 100; // Define a distância máxima para gerar sombras
-  directionalLight.shadow.camera.left = -50; // Aumenta a área da câmera ortográfica para a esquerda
-  directionalLight.shadow.camera.right = 50; // Aumenta a área da câmera ortográfica para a direita
-  directionalLight.shadow.camera.top = 50; // Aumenta a área da câmera ortográfica para cima
-  directionalLight.shadow.camera.bottom = -50; // Aumenta a área da câmera ortográfica para baixo
+  directionalLight.shadow.camera.near = 0.1;
+  directionalLight.shadow.camera.far = 100;
+  directionalLight.shadow.camera.left = -50;
+  directionalLight.shadow.camera.right = 50;
+  directionalLight.shadow.camera.top = 50;
+  directionalLight.shadow.camera.bottom = -50;
 
   // Aumentando a resolução do shadow map para sombras mais detalhadas
-  directionalLight.shadow.mapSize.width = 2048; // Resolução horizontal das sombras
-  directionalLight.shadow.mapSize.height = 2048; // Resolução vertical das sombras
+  directionalLight.shadow.mapSize.width = 2048;
+  directionalLight.shadow.mapSize.height = 2048;
 
-  // Criação de um helper para visualizar a luz
-  const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5); // O segundo parâmetro define o tamanho do helper
-  scene.add(lightHelper); // Adiciona o helper à cena
-
-  renderer.shadowMap.enabled = true; // Habilita sombras
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Define o tipo de sombras
+  //const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+  //scene.add(lightHelper);
 }
 
 function createLightsForLevel1(scene, renderer) {
@@ -83,22 +79,18 @@ function createLightsForLevel2(scene, renderer) {
   scene.add(directionalLight); // Adiciona a luz à cena
 
   // Configuração do shadow map para aumentar a área de projeção de sombras
-  directionalLight.shadow.camera.near = 0.1; // Define o quão perto os objetos podem estar para gerar sombras
-  directionalLight.shadow.camera.far = 100; // Define a distância máxima para gerar sombras
-  directionalLight.shadow.camera.left = -50; // Aumenta a área da câmera ortográfica para a esquerda
-  directionalLight.shadow.camera.right = 50; // Aumenta a área da câmera ortográfica para a direita
-  directionalLight.shadow.camera.top = 50; // Aumenta a área da câmera ortográfica para cima
-  directionalLight.shadow.camera.bottom = -50; // Aumenta a área da câmera ortográfica para baixo
+  directionalLight.shadow.camera.near = 0.1;
+  directionalLight.shadow.camera.far = 120;
+  directionalLight.shadow.camera.left = -60;
+  directionalLight.shadow.camera.right = 60;
+  directionalLight.shadow.camera.top = 60;
+  directionalLight.shadow.camera.bottom = -60;
 
-  directionalLight.shadow.mapSize.width = 2048; // Resolução horizontal das sombras
-  directionalLight.shadow.mapSize.height = 2048; // Resolução vertical das sombras
+  directionalLight.shadow.mapSize.width = 2048;
+  directionalLight.shadow.mapSize.height = 2048;
 
-  // Criação de um helper para visualizar a luz
-  const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-  scene.add(lightHelper);
-
-  renderer.shadowMap.enabled = true; // Habilita sombras
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Define o tipo de sombras
+  //const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+  //scene.add(lightHelper);
 }
 
 export { createLightsForLevel0, createLightsForLevel1, createLightsForLevel2 };

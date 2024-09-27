@@ -1,12 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import {
-  initRenderer,
-  initCamera,
-  initDefaultBasicLight,
-  setDefaultMaterial,
-  createGroundPlaneXZ,
-} from "../libs/util/util.js";
+import { initRenderer, initCamera, initDefaultBasicLight, setDefaultMaterial, createGroundPlaneXZ } from "../libs/util/util.js";
 import { SecondaryBoxTopEsquerda } from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
@@ -14,29 +8,15 @@ import { buildTutorial } from "./controls/tutorialControl.js";
 import { checkCollisions } from "./controls/collisionsControl.js";
 import { updateCameraPosition } from "./controls/cameraControl.js";
 import { createBBHelper } from "./helpers/bbHelper.js";
-import {
-  levels,
-  scene,
-  walls,
-  bbWalls,
-  bbMovingWalls,
-  movingWalls,
-} from "./constants/constants.js";
+import { levels, scene, walls, bbWalls, bbMovingWalls, movingWalls } from "./constants/constants.js";
 import { TankImport } from "./components/importTank.js";
 import { createLampposts } from "./components/importLamp.js";
-import {
-  createLightsForLevel0,
-  createLightsForLevel1,
-  createLightsForLevel2,
-} from "./components/createLight.js";
+import { createLightsForLevel0, createLightsForLevel1, createLightsForLevel2 } from "./components/createLight.js";
 import { ProgressBar } from "./components/barraDeVida.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
 import { shootCannon } from "./controls/tiroCanhao.js";
-import {
-  createMovingWall,
-  updateWalls,
-} from "./components/createMovingWalls.js";
+import { createMovingWall, updateWalls } from "./components/createMovingWalls.js";
 import { InfoBox2 } from "./util/util.js";
 import { updatePowerUpSystem } from "./controls/powerUpSystem.js";
 
@@ -57,6 +37,23 @@ let index = 0;
 let tank1, tank2, tank3, tank4;
 let cannon;
 
+// Função para iniciar o jogo
+function startGame() {
+  // Esconde a tela inicial
+  const startScreen = document.getElementById("start-screen");
+  startScreen.style.display = "none";
+
+  // Exibe a área do jogo
+  const gameOutput = document.getElementById("webgl-output");
+  gameOutput.style.display = "block";
+
+  // Chama a função init para inicializar o jogo
+  init();
+}
+
+// Evento no botão para iniciar o jogo
+document.getElementById("start-button").addEventListener("click", startGame);
+
 function init() {
   renderer = initRenderer();
   camera = initCamera(new THREE.Vector3(0, 15, 30));
@@ -70,6 +67,8 @@ function init() {
   orbit.maxPolarAngle = Math.PI / 2.5; // Limite máximo (impede a câmera de virar completamente)
 
   updateGroundPlane(index);
+
+  render();
 }
 
 //-- CRIANDO O MAPA EQUIRETANGULAR ---------------------------------------------------------------------
@@ -96,9 +95,7 @@ function updateGroundPlane(index) {
   }
 
   const textureLoader = new THREE.TextureLoader();
-  const floorTexturePath = `/T2/assets/floorTextures/floorTextureLevel${
-    index + 1
-  }.jpg`;
+  const floorTexturePath = `/T2/assets/floorTextures/floorTextureLevel${index + 1}.jpg`;
   const floorTexture = textureLoader.load(floorTexturePath);
 
   floorTexture.colorSpace = THREE.SRGBColorSpace;
@@ -167,17 +164,8 @@ function createTank(color, position, rotation) {
 }
 
 function createRotatingCannon() {
-  const createCylinderMesh = (
-    radiusTop,
-    radiusBottom,
-    height,
-    segments,
-    position,
-    rotation
-  ) => {
-    const mesh = new THREE.Mesh(
-      new THREE.CylinderGeometry(radiusTop, radiusBottom, height, segments)
-    );
+  const createCylinderMesh = (radiusTop, radiusBottom, height, segments, position, rotation) => {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radiusTop, radiusBottom, height, segments));
     mesh.position.copy(position);
     mesh.rotation.copy(rotation);
     mesh.updateMatrix();
@@ -255,20 +243,14 @@ function comportamentoCannon(canhao, tanks, targetBoundingBox, index) {
     const cannonPosition = canhao.position.clone();
 
     // Calcular a direção para o tanque mais próximo
-    const direction = new THREE.Vector3()
-      .subVectors(targetPosition, cannonPosition)
-      .normalize();
+    const direction = new THREE.Vector3().subVectors(targetPosition, cannonPosition).normalize();
 
     // Atualizar a rotação do canhão lentamente em direção ao tanque mais próximo
     const targetRotationZ = Math.atan2(direction.z, direction.x); // Cálculo da rotação desejada no eixo Z
     const rotationSpeed = 0.01; // Ajuste a velocidade da rotação
 
     // Rotação suave em direção ao tanque
-    canhao.rotation.z += THREE.MathUtils.clamp(
-      targetRotationZ - canhao.rotation.z,
-      -rotationSpeed,
-      rotationSpeed
-    );
+    canhao.rotation.z += THREE.MathUtils.clamp(targetRotationZ - canhao.rotation.z, -rotationSpeed, rotationSpeed);
 
     // Disparar se a cadência de tiro permitir
     shootCannon(canhao, closestTank.object, targetBoundingBox, index);
@@ -328,24 +310,14 @@ function resetGame(index) {
   if (index === 0) {
     createLightsForLevel0(scene, renderer);
 
-    tankPromises.push(
-      createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI)
-    );
-    tankPromises.push(
-      createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI)
-    );
+    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-20, 0, 15), Math.PI));
+    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(20, 0, 15), Math.PI));
   } else if (index === 1) {
     createLightsForLevel1(scene, renderer);
 
-    tankPromises.push(
-      createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360)
-    );
-    tankPromises.push(
-      createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360)
-    );
-    tankPromises.push(
-      createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI)
-    );
+    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-30, 0, -15), Math.PI / 360));
+    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(30, 0, -15), Math.PI / 360));
+    tankPromises.push(createTank(0xff0000, new THREE.Vector3(30, 0, 15), Math.PI));
 
     createLampposts(scene);
 
@@ -359,19 +331,11 @@ function resetGame(index) {
     createMovingWall(scene, new THREE.Vector3(27.5, 2.5, 0), 0);
 
     // Definição para o nível 3
-    tankPromises.push(
-      createTank("tanqueUsuario", new THREE.Vector3(-35, 0, 0), Math.PI / 2)
-    );
-    tankPromises.push(
-      createTank(0x0000ff, new THREE.Vector3(-10, 0, -20), Math.PI / 360)
-    );
-    tankPromises.push(
-      createTank(0xff0000, new THREE.Vector3(15, 0, 20), Math.PI)
-    );
+    tankPromises.push(createTank("tanqueUsuario", new THREE.Vector3(-35, 0, 0), Math.PI / 2));
+    tankPromises.push(createTank(0x0000ff, new THREE.Vector3(-10, 0, -20), Math.PI / 360));
+    tankPromises.push(createTank(0xff0000, new THREE.Vector3(15, 0, 20), Math.PI));
 
-    tankPromises.push(
-      createTank(0xff00ff, new THREE.Vector3(40, 0, -20), Math.PI / 360)
-    );
+    tankPromises.push(createTank(0xff00ff, new THREE.Vector3(40, 0, -20), Math.PI / 360));
   }
 
   Promise.all(tankPromises).then((results) => {
@@ -392,7 +356,7 @@ function resetGame(index) {
   });
 }
 
-init();
+//init();
 
 function Godmode() {
   godModeEnabled = !godModeEnabled;
@@ -550,38 +514,10 @@ function render() {
 
   if (index === 0) {
     if (tank1 && tank2) {
-      keyboardUpdateTank1(
-        index,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank,
-        null,
-        null
-      );
-      checkCollisions(
-        index,
-        tank1.tank.object,
-        tank1.bbTank,
-        tank2.tank.object,
-        tank2.bbTank,
-        null,
-        null,
-        null,
-        null,
-        bbWalls,
-        null,
-        null
-      );
+      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, null, null);
+      checkCollisions(index, tank1.tank.object, tank1.bbTank, tank2.tank.object, tank2.bbTank, null, null, null, null, bbWalls, null, null);
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
-      enemyTankBehavior(
-        index,
-        2,
-        tank2.tank,
-        tank2.bbTank,
-        tank1.tank,
-        tank1.bbTank
-      );
+      enemyTankBehavior(index, 2, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank);
 
       mostraNivel();
       verificaPlacar();
@@ -594,15 +530,7 @@ function render() {
         let targetBoundingBox = [tank1.bbTank, tank2.bbTank, tank3.bbTank];
         comportamentoCannon(cannon, targetTank, targetBoundingBox, index);
       }
-      keyboardUpdateTank1(
-        index,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank,
-        tank3.tank,
-        tank3.bbTank
-      );
+      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
       checkCollisions(
         index,
         tank1.tank.object,
@@ -620,29 +548,11 @@ function render() {
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
 
       if (tank2.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          2,
-          tank2.tank,
-          tank2.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank3.tank,
-          tank3.bbTank
-        );
+        enemyTankBehavior(index, 2, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank, tank3.tank, tank3.bbTank);
       }
 
       if (tank3.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          3,
-          tank3.tank,
-          tank3.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank2.tank,
-          tank2.bbTank
-        );
+        enemyTankBehavior(index, 3, tank3.tank, tank3.bbTank, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank);
       }
 
       mostraNivel();
@@ -653,17 +563,7 @@ function render() {
     // Atualiza o sistema de power-ups
     updatePowerUpSystem(scene, tank1.bbTank);
     if (tank1 && tank2 && tank3 && tank4) {
-      keyboardUpdateTank1(
-        index,
-        tank1.tank,
-        tank1.bbTank,
-        tank2.tank,
-        tank2.bbTank,
-        tank3.tank,
-        tank3.bbTank,
-        tank4.tank,
-        tank4.bbTank
-      );
+      keyboardUpdateTank1(index, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank, tank4.tank, tank4.bbTank);
 
       checkCollisions(
         index,
@@ -681,47 +581,14 @@ function render() {
       );
 
       if (tank2.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          2,
-          tank2.tank,
-          tank2.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank3.tank,
-          tank3.bbTank,
-          tank4.tank,
-          tank4.bbTank
-        );
+        enemyTankBehavior(index, 2, tank2.tank, tank2.bbTank, tank1.tank, tank1.bbTank, tank3.tank, tank3.bbTank, tank4.tank, tank4.bbTank);
       }
 
       if (tank3.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          3,
-          tank3.tank,
-          tank3.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank2.tank,
-          tank2.bbTank,
-          tank4.tank,
-          tank4.bbTank
-        );
+        enemyTankBehavior(index, 3, tank3.tank, tank3.bbTank, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank4.tank, tank4.bbTank);
       }
       if (tank4.tank.object.visible) {
-        enemyTankBehavior(
-          index,
-          4,
-          tank4.tank,
-          tank4.bbTank,
-          tank1.tank,
-          tank1.bbTank,
-          tank2.tank,
-          tank2.bbTank,
-          tank3.tank,
-          tank3.bbTank
-        );
+        enemyTankBehavior(index, 4, tank4.tank, tank4.bbTank, tank1.tank, tank1.bbTank, tank2.tank, tank2.bbTank, tank3.tank, tank3.bbTank);
       }
 
       updateCameraPosition(camera, tank1.tank.object, orbitControlsEnabled);
@@ -734,5 +601,3 @@ function render() {
     }
   }
 }
-
-render();
