@@ -16,7 +16,9 @@ function keyboardUpdateTank1(
   tankInimigo2,
   bbTankInimigo2,
   tankInimigo3,
-  bbTankInimigo3
+  bbTankInimigo3,
+  tankInimigo4,
+  bbTankInimigo4
 ) {
   keyboard.update();
   tank1.object.previousPosition = tank1.object.position.clone();
@@ -49,6 +51,10 @@ function keyboardUpdateTank1(
       // Adicionar lógica para considerar todos os inimigos
       targetTank = [tankInimigo2, tankInimigo3];
       targetBoundingBox = [bbTankInimigo2, bbTankInimigo3];
+    } else if (index === 2) {
+      // Adicionar lógica para considerar todos os inimigos
+      targetTank = [tankInimigo2, tankInimigo3, tankInimigo4];
+      targetBoundingBox = [bbTankInimigo2, bbTankInimigo3, bbTankInimigo4];
     }
 
     const ball = new Ball(direction, targetTank, targetBoundingBox, index);
