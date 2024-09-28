@@ -67,13 +67,13 @@ else scene.plataforma = "mobile";
 let tank1, tank2, tank3, tank4;
 let cannon;
 
-let isMuted = false; // Variável global para controlar o estado de mute
+scene.isMuted = false; // Variável global para controlar o estado de mute
 
 // Evento de teclado para mutar/desmutar som com a tecla 'P'
 window.addEventListener("keydown", function (event) {
   if (event.key.toLowerCase() === "p") {
-    isMuted = !isMuted; // Alterna o estado de mute
-    toggleMute(isMuted); // Atualiza os sons com base no estado de mute
+    scene.isMuted = !scene.isMuted; // Alterna o estado de mute
+    toggleMute(scene.isMuted); // Atualiza os sons com base no estado de mute
   }
 });
 

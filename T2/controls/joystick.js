@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Ball } from "../components/createBall.js";
+import { toggleMute } from "../components/createSound.js";
 
 // Gerenciador de bolas
 const ballsTank1 = [];
@@ -15,6 +16,7 @@ export function addJoysticks(scene) {
   document.getElementById("buttons_mobile").style.display = "block";
   moverJoystick();
   configurarBotaoDeTiro(scene);
+  configurarBotaoDeSom(scene);
 }
 
 function moverJoystick() {
@@ -96,6 +98,15 @@ export function moveTank(tank1, bbTank1) {
   bbTank1.setFromObject(tank1.object);
 
   ballsTank1.forEach((ball) => ball.move());
+}
+
+function configurarBotaoDeSom(scene) {
+  const muteButton = document.getElementById("A");
+  muteButton.addEventListener("touchstart", function () {
+    // Inverte o valor da variável isMuted e chama a função de toggle
+    scene.isMuted = !scene.isMuted;
+    toggleMute(scene.isMuted);
+  });
 }
 
 function configurarBotaoDeTiro(scene) {
