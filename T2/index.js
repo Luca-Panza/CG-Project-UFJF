@@ -97,8 +97,8 @@ function init() {
   orbit.enabled = false;
 
   // Ajusta os limites de rotação vertical para que a câmera não vire para baixo demais
-  orbit.minPolarAngle = Math.PI / 4; // Limite mínimo (ângulo menor que isso impede olhar para baixo)
-  orbit.maxPolarAngle = Math.PI / 2.5; // Limite máximo (impede a câmera de virar completamente)
+  //orbit.minPolarAngle = Math.PI / 4; // Limite mínimo (ângulo menor que isso impede olhar para baixo)
+  //orbit.maxPolarAngle = Math.PI / 2.5; // Limite máximo (impede a câmera de virar completamente)
 
   updateGroundPlane(index);
 
