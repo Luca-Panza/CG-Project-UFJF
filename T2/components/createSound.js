@@ -70,7 +70,7 @@ function playBackgroundMusic(camera) {
 
   // Create an audio source for background music
   backgroundMusic = new THREE.Audio(listener);
-  audioLoader.load("/T2/assets/sounds/sfx-theme.mp3", function (buffer) {
+  audioLoader.load("./assets/sounds/sfx-theme.mp3", function (buffer) {
     backgroundMusic.setBuffer(buffer);
     backgroundMusic.setLoop(true);
     backgroundMusic.setVolume(0.05);
@@ -87,7 +87,7 @@ function playCannonShot() {
   cannonShot = new THREE.Audio(listener);
 
   // Carrega o som do tiro de canhão
-  audioLoader.load("/T2/assets/sounds/sfx-cannon-shot.mp3", function (buffer) {
+  audioLoader.load("./assets/sounds/sfx-cannon-shot.mp3", function (buffer) {
     cannonShot.setBuffer(buffer);
     cannonShot.setVolume(0.025); // Respeita o estado de mudo global
     cannonShot.play();
@@ -101,7 +101,7 @@ function playDamageSound(playerExists) {
   let damageSound = new THREE.Audio(listener);
 
   // Carrega o som de dano
-  audioLoader.load("/T2/assets/sounds/sfx-damage.mp3", function (buffer) {
+  audioLoader.load("./assets/sounds/sfx-damage.mp3", function (buffer) {
     damageSound.setBuffer(buffer);
 
     // Se o jogador existir, aumenta o volume para 0.05, caso contrário, deixa 0.025
