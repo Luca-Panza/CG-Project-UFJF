@@ -1,4 +1,4 @@
-import { InfoBox, InfoBox2 } from "../util/util.js";
+import { InfoBox } from "../util/util.js";
 
 // Função para criar a caixa de informações do tutorial
 function buildTutorial() {

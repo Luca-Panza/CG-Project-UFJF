@@ -17,37 +17,51 @@
         touch-action: manipulation;
       }
 
-          /* Estilo para a tela inicial */
-    #start-screen {
-      background-color: black;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh; /* Ocupa 100% da altura da viewport */
-    }
+      /* Estilo para as telas (start-screen e end-screen) */
+      .screen {
+        background-color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Ocupa 100% da altura da viewport */
+      }
 
-    /* Estilo para a imagem */
-    #start-image {
-      width: 80%; /* Ocupa 80% da largura da tela */
-      height: auto; /* Mantém a proporção da imagem */
-      margin-bottom: 20px; /* Espaço entre a imagem e o botão */
-    }
+      /* Estilo para as imagens */
+      .screen-image {
+        width: 80%; /* Ocupa 80% da largura da tela */
+        height: auto; /* Mantém a proporção da imagem */
+        margin-bottom: 20px; /* Espaço entre a imagem e o botão */
+      }
 
-    /* Estilo para o botão */
-    #start-button {
-      background-color: green;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
-    }
+      /* Estilo para os botões */
+      .screen-button {
+        background-color: green;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+      }
 
-    /* Efeito hover para o botão */
-    #start-button:hover {
-      background-color: darkgreen; /* Muda para um verde mais escuro ao passar o mouse */
-    }
+      /* Efeito hover para os botões */
+      .screen-button:hover {
+        background-color: darkgreen; /* Muda para um verde mais escuro ao passar o mouse */
+      }
+
+      #start-image {
+        margin-bottom: 0;
+      }
+
+      /* Ocultar telas inicialmente */
+      #end-screen {
+        display: none;
+      }
+
+      #end-image {
+  margin-bottom: 0;
+}
+
 
     </style>
 </head>
@@ -60,10 +74,13 @@
   </script> 
 
     <!-- Tela inicial do jogo -->
-    <div id="start-screen">
-      <img id="start-image" src="./assets/top1.webp" alt="Imagem do Jogo">
-      <button id="start-button">Play</button>
+    <div id="start-screen" class="screen">
+      <div style="position: relative; display: inline-block; text-align: center;">
+        <img id="start-image" class="screen-image" src="./assets/top1.webp" alt="Imagem do Jogo" style="margin-bottom: 0;">
+        <button id="start-button" class="screen-button" style="position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%);">Play</button>
+      </div>
     </div>
+
 
     <div id="joystickWrapper1"></div>
     <div id="buttons_mobile" style="display: none;">
@@ -72,15 +89,22 @@
     </div>
 
     <!-- Tela de término de jogo -->
-    <div id="end-screen" style="display: none; text-align: center; margin-top: 20%;">
-      <h1>Parabéns! Você venceu o jogo!</h1>
-      <button id="play-again-button">Jogar Novamente</button>
+    <div id="end-screen" class="screen">
+      <div style="position: relative; display: inline-block; text-align: center;">
+        <img id="end-image" class="screen-image" src="./assets/back.webp" alt="Imagem do Jogo" style="margin-bottom: 0;">
+        <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; font-weight: bold; background-color: rgba(0, 0, 0, 0.5); padding: 10px; border-radius: 10px;">
+          Parabéns! Você concluiu o jogo!
+        </div>
+        <button id="play-again-button" class="screen-button" style="position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%);">
+          Jogar Novamente
+        </button>
+      </div>
     </div>
 
     <script src="../libs/other/nipplejs.js"></script>
 
-  <div id="webgl-output">        
-    <script type="module" src="index.js"></script>
-  </div>
+    <div id="webgl-output">        
+      <script type="module" src="index.js"></script>
+    </div>
 </body>
 </html>

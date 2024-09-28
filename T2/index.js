@@ -43,20 +43,18 @@ if (screenX > 600) {
   scene.plataforma = "mobile";
   // Forçar modo paisagem se em modo retrato
   if (window.matchMedia("(orientation: portrait)").matches) {
-    screen.orientation.lock("landscape").catch(err => console.error(err));
+    screen.orientation.lock("landscape").catch((err) => console.error(err));
   }
 }
 
 // Adiciona listener para garantir que a orientação permaneça em paisagem
 window.addEventListener("orientationchange", function () {
   if (window.matchMedia("(orientation: portrait)").matches) {
-    screen.orientation.lock("landscape").catch(err => console.error(err));
-  }
-  else {
+    screen.orientation.lock("landscape").catch((err) => console.error(err));
+  } else {
     alert("Para uma melhor experiência de jogo, por favor, mude seu dispositivo para o modo paisagem.");
   }
 });
-
 
 // Declarar variáveis globais para os tanques
 let tank1, tank2, tank3, tank4;
@@ -505,9 +503,13 @@ if (scene.plataforma == "pc") {
 }
 
 const tituloNivel = new SecondaryBoxTopEsquerda();
+tituloNivel.changeMessage(""); // Define a mensagem inicial como vazia
 
 function mostraNivel() {
-  tituloNivel.changeMessage("Nível " + (index + 1));
+  // Verifica se 'index' está definido e não é nulo
+  if (typeof index !== "undefined" && index !== null) {
+    tituloNivel.changeMessage("Nível " + (index + 1));
+  }
 }
 
 function atualizaBarraDeVida() {
