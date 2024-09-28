@@ -16,6 +16,39 @@
         display: block;
         touch-action: manipulation;
       }
+
+          /* Estilo para a tela inicial */
+    #start-screen {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* Ocupa 100% da altura da viewport */
+    }
+
+    /* Estilo para a imagem */
+    #start-image {
+      width: 80%; /* Ocupa 80% da largura da tela */
+      height: auto; /* Mantém a proporção da imagem */
+      margin-bottom: 20px; /* Espaço entre a imagem e o botão */
+    }
+
+    /* Estilo para o botão */
+    #start-button {
+      background-color: green;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Efeito hover para o botão */
+    #start-button:hover {
+      background-color: darkgreen; /* Muda para um verde mais escuro ao passar o mouse */
+    }
+
     </style>
 </head>
 
@@ -26,10 +59,10 @@
     {"imports": {"three": "../build/three.module.js"}} 
   </script> 
 
-    <!-- Tela inicial com texto "OI" e botão -->
-    <div id="start-screen" style="text-align:center; margin-top: 20%;">
-      <h1>OI</h1>
-      <button id="start-button">Iniciar Jogo</button>
+    <!-- Tela inicial do jogo -->
+    <div id="start-screen">
+      <img id="start-image" src="./assets/top1.webp" alt="Imagem do Jogo">
+      <button id="start-button">Play</button>
     </div>
 
     <div id="joystickWrapper1"></div>
