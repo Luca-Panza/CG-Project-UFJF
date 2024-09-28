@@ -27,7 +27,7 @@ export class TankImport {
     return new Promise((resolve, reject) => {
       const loader = new GLTFLoader();
       loader.load(
-        "./components/uploads_files_2449357_toon_tank.glb",
+        "./components/toon_tank.glb",
         (gltf) => {
           const obj = gltf.scene;
 

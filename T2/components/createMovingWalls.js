@@ -11,9 +11,7 @@ function createMovingWall(scene, position, height) {
 
   // Carregar a textura da caixa (crate)
   const textureLoader = new THREE.TextureLoader();
-  const crateTexture = textureLoader.load(
-    "/T2/assets/crateTextures/movingCrateTexture.jpg"
-  );
+  const crateTexture = textureLoader.load("/T2/assets/crateTextures/movingCrateTexture.jpg");
 
   // Aplicar a textura ao material de Phong
   const material = new THREE.MeshPhongMaterial({ map: crateTexture });
@@ -30,7 +28,6 @@ function createMovingWall(scene, position, height) {
   wall.position.set(position.x, position.y, position.z);
   wall.rotation.x = Math.PI / 2;
   scene.add(wall);
-  scene.add(bbHelperMovableWall); // Adiciona o helper ao cenário
 
   movingWalls.push(wall);
 
@@ -52,10 +49,7 @@ function updateWalls() {
     wall.position.z += entry.direction * entry.speed;
 
     // Verificar os limites e inverter a direção
-    if (
-      wall.position.z > planeHeight / 4.7 ||
-      wall.position.z < -planeHeight / 4.7
-    ) {
+    if (wall.position.z > planeHeight / 4.7 || wall.position.z < -planeHeight / 4.7) {
       entry.direction *= -1;
     }
 

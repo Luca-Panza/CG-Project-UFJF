@@ -1,14 +1,9 @@
 import * as THREE from "three";
 import { scene, bbWalls } from "../constants/constants.js";
+import { playCannonShot, playDamageSound } from "../components/createSound.js";
 //-- Ball Class -----------------------------------------------------------
 export class Ball {
-  constructor(
-    direction,
-    tankInimigo,
-    bbTankInimigo,
-    index,
-    tankUsuario = null
-  ) {
+  constructor(direction, tankInimigo, bbTankInimigo, index, tankUsuario = null) {
     this.speed = 0.5;
     this.moveOn = true;
     this.direction = direction;
@@ -23,8 +18,10 @@ export class Ball {
     this.bbTankInimigo = bbTankInimigo;
     this.tankUsuario = tankUsuario;
     this.index = index;
-    scene.add(this.bbHelper1);
+    //scene.add(this.bbHelper1);
     scene.add(this.object);
+
+    playCannonShot();
   }
   destroy() {
     scene.remove(this.object);
@@ -65,8 +62,10 @@ export class Ball {
         if (!tankInimigo.godMode) {
           if (this.tankUsuario && this.tankUsuario.danoTiro == 2) {
             tankInimigo.vida = tankInimigo.vida - 2;
+            playDamageSound(true);
           } else {
             tankInimigo.vida = tankInimigo.vida - 1;
+            playDamageSound(this.tankUsuario != null);
           }
           this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no tanque inimigo
         }

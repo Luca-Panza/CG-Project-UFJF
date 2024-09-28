@@ -69,14 +69,4 @@ const levels = [
   ],
 ];
 
-export {
-  moveDistance,
-  rotateAngle,
-  levels,
-  scene,
-  walls,
-  bbWalls,
-  bbMovingWalls,
-  movingWalls,
-  currentLevelIndex,
-};
+export { moveDistance, rotateAngle, levels, scene, walls, bbWalls, bbMovingWalls, movingWalls, currentLevelIndex };
