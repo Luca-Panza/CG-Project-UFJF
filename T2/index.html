@@ -5,6 +5,18 @@
     <link rel="shortcut icon" href="../logo.png">
     <link rel="stylesheet" href="../html/resources/default.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">  
+    <!-- Buttons stylesheet with main definitions, position colors etc-->
+    <link rel="stylesheet" href="../libs/other/buttons.css">
+    <style>
+      #joystickWrapper1 {
+        pointer-events: auto;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: block;
+        touch-action: manipulation;
+      }
+    </style>
 </head>
 
 <body>
@@ -20,11 +32,19 @@
       <button id="start-button">Iniciar Jogo</button>
     </div>
 
+    <div id="joystickWrapper1"></div>
+    <div id="buttons_mobile" style="display: none;">
+      <button style="bottom:20px; right: 120px;" id="A" class="video-game-button">A</button>
+      <button style="bottom:20px; right: 20px;" id="shoot-button" class="video-game-button">Shoot</button>
+    </div>
+
     <!-- Tela de término de jogo -->
     <div id="end-screen" style="display: none; text-align: center; margin-top: 20%;">
       <h1>Parabéns! Você venceu o jogo!</h1>
       <button id="play-again-button">Jogar Novamente</button>
     </div>
+
+    <script src="../libs/other/nipplejs.js"></script>
 
   <div id="webgl-output">        
     <script type="module" src="index.js"></script>

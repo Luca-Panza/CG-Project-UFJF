@@ -31,7 +31,12 @@ function checkCollisionsTankWall(tank, bbTank, bbWalls) {
 }
 
 // Função que verifica colisões entre tanques e paredes móveis
-function checkCollisionsTankMovingWall(tank, bbTank, movingWalls, bbMovingWalls) {
+function checkCollisionsTankMovingWall(
+  tank,
+  bbTank,
+  movingWalls,
+  bbMovingWalls
+) {
   for (let i = 0; i < movingWalls.length; i++) {
     const movingWall = movingWalls[i]; // Parede móvel atual
     const bbMovingWall = bbMovingWalls[i]; // Bounding box da parede móvel atual
@@ -55,7 +60,6 @@ function checkCollisionsTankMovingWall(tank, bbTank, movingWalls, bbMovingWalls)
     }
   }
 }
-
 
 function checkCollisions(
   index,
