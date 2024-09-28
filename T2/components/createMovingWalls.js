@@ -11,7 +11,7 @@ function createMovingWall(scene, position, height) {
 
   // Carregar a textura da caixa (crate)
   const textureLoader = new THREE.TextureLoader();
-  const crateTexture = textureLoader.load("/T2/assets/crateTextures/movingCrateTexture.jpg");
+  const crateTexture = textureLoader.load("./assets/crateTextures/movingCrateTexture.jpg");
 
   // Aplicar a textura ao material de Phong
   const material = new THREE.MeshPhongMaterial({ map: crateTexture });

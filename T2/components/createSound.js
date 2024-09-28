@@ -32,9 +32,9 @@ function playRandomSound() {
   if (isMutedGlobal) return;
 
   const sounds = [
-    { src: "/T2/assets/sounds/sfx-herewego.mp3", chance: 0.495 }, // 49,5% de chance
-    { src: "/T2/assets/sounds/sfx-letsgo.mp3", chance: 0.495 }, // 49,5% de chance
-    { src: "/T2/assets/sounds/sfx-yeeha.mp3", chance: 0.01 }, // 1% de chance
+    { src: "./assets/sounds/sfx-herewego.mp3", chance: 0.495 }, // 49,5% de chance
+    { src: "./assets/sounds/sfx-letsgo.mp3", chance: 0.495 }, // 49,5% de chance
+    { src: "./assets/sounds/sfx-yeeha.mp3", chance: 0.01 }, // 1% de chance
   ];
 
   const random = Math.random();

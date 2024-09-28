@@ -8,7 +8,7 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
 
   // Carregar a textura da caixa (crate) com base no nível
   const textureLoader = new THREE.TextureLoader();
-  const texturePath = `/T2/assets/crateTextures/crateTextureLevel${index + 1}.jpg`;
+  const texturePath = `./assets/crateTextures/crateTextureLevel${index + 1}.jpg`;
   const crateTexture = textureLoader.load(texturePath);
 
   // Aplicar a textura ao material de Lambert
