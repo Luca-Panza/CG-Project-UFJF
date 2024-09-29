@@ -37,8 +37,26 @@ let index = 0;
 
 let screenX = window.screen.availWidth;
 
-if (screenX > 600) scene.plataforma = "pc";
-else scene.plataforma = "mobile";
+if (screenX > 600) {
+  scene.plataforma = "pc";
+} else {
+  scene.plataforma = "mobile";
+  // Forçar modo paisagem se em modo retrato
+  if (window.matchMedia("(orientation: portrait)").matches) {
+    screen.orientation.lock("landscape").catch(err => console.error(err));
+  }
+}
+
+// Adiciona listener para garantir que a orientação permaneça em paisagem
+window.addEventListener("orientationchange", function () {
+  if (window.matchMedia("(orientation: portrait)").matches) {
+    screen.orientation.lock("landscape").catch(err => console.error(err));
+  }
+  else {
+    alert("Para uma melhor experiência de jogo, por favor, mude seu dispositivo para o modo paisagem.");
+  }
+});
+
 
 // Declarar variáveis globais para os tanques
 let tank1, tank2, tank3, tank4;
@@ -99,7 +117,6 @@ function init() {
   // Ajusta os limites de rotação vertical para que a câmera não vire para baixo demais
   //orbit.minPolarAngle = Math.PI / 4; // Limite mínimo (ângulo menor que isso impede olhar para baixo)
   //orbit.maxPolarAngle = Math.PI / 2.5; // Limite máximo (impede a câmera de virar completamente)
-
   updateGroundPlane(index);
 
   playBackgroundMusic(camera);
