@@ -35,6 +35,7 @@ function shootCannon(canhao, targetTank, targetBoundingBox, index) {
   // Dispara o canhão a cada 3 segundos
   const currentTime = performance.now();
   if (currentTime - lastShootTime >= shootInterval) {
+    // Dispara uma bola
     shoot(canhao, targetTank, targetBoundingBox, index);
     lastShootTime = currentTime; // Atualiza o tempo do último disparo
   }

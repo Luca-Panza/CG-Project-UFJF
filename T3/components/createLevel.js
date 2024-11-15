@@ -31,19 +31,35 @@ function createLevel(levelData, planeWidth, planeHeight, scene, index) {
         wall.position.set(posX, posY, posZ);
 
         let bbWall = new THREE.Box3().setFromObject(wall);
-        let normal = new THREE.Vector3(1, 0, 0); // Normal padrão
+        let normals = [];
 
-        if (i === 0) {
-          normal = new THREE.Vector3(0, 0, 1);
-        } else if (i === levelData.length - 1) {
-          normal = new THREE.Vector3(0, 0, -1);
-        } else if (j === 0) {
-          normal = new THREE.Vector3(1, 0, 0);
-        } else if (j === levelData[i].length - 1) {
-          normal = new THREE.Vector3(-1, 0, 0);
+        // Verificar células adjacentes e adicionar normais ao array
+        // Célula acima (parede superior)
+        if (i > 0 && levelData[i - 1][j] === 0) {
+          normals.push(new THREE.Vector3(0, 0, 1)); // Inverter para (0, 0, 1)
+        }
+        // Célula abaixo (parede inferior)
+        if (i < levelData.length - 1 && levelData[i + 1][j] === 0) {
+          normals.push(new THREE.Vector3(0, 0, -1)); // Inverter para (0, 0, -1)
+        }
+        // Célula à esquerda
+        if (j > 0 && levelData[i][j - 1] === 0) {
+          normals.push(new THREE.Vector3(-1, 0, 0)); // Mantém como está
+        }
+        // Célula à direita
+        if (j < levelData[i].length - 1 && levelData[i][j + 1] === 0) {
+          normals.push(new THREE.Vector3(1, 0, 0)); // Mantém como está
         }
 
-        bbWall.normal = normal;
+        // Normalizar as normais
+        normals.forEach((normal) => normal.normalize());
+
+        // Se nenhuma normal foi adicionada, definir uma normal padrão (opcional)
+        if (normals.length === 0) {
+          normals.push(new THREE.Vector3(0, 1, 0)); // Por exemplo, apontando para cima
+        }
+
+        bbWall.normals = normals;
 
         walls.push(wall);
         bbWalls.push(bbWall);

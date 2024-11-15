@@ -1,27 +1,27 @@
 import * as THREE from "three";
 import { scene, bbWalls } from "../constants/constants.js";
 import { playCannonShot, playDamageSound } from "../components/createSound.js";
+
 //-- Ball Class -----------------------------------------------------------
 export class Ball {
-  constructor(direction, tankInimigo, bbTankInimigo, index, tankUsuario = null) {
+  constructor(direction, tankInimigo, bbTankInimigo, index, tankUsuario = null, canhao = null) {
     this.speed = 0.5;
     this.moveOn = true;
-    this.direction = direction;
+    this.direction = direction.normalize();
     this.object = this.buildGeometry();
-    this.ballHasBeenHit = false; // usado para verificar se a bola atingiu o tank
+    this.ballHasBeenHit = false;
     this.bbBall = new THREE.Box3();
     this.bbBall.setFromObject(this.object);
     this.object.previousPosition = this.object.position.clone();
-    this.collisionCount = 0; // Contador de colisões
-    //this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
-    this.tankInimigo = tankInimigo;
-    this.bbTankInimigo = bbTankInimigo;
+    this.collisionCount = 0;
+    this.tankInimigo = tankInimigo || null;
+    this.bbTankInimigo = bbTankInimigo || null;
     this.tankUsuario = tankUsuario;
     this.index = index;
-    //scene.add(this.bbHelper1);
     scene.add(this.object);
-
     playCannonShot();
+    // this.bbHelper1 = new THREE.Box3Helper(this.bbBall, "white");
+    // scene.add(this.bbHelper1);
   }
   destroy() {
     scene.remove(this.object);
@@ -44,30 +44,38 @@ export class Ball {
     this.bbBall.setFromObject(this.object);
 
     this.checkCollisions();
-    if (this.index == 0) {
-      this.checkCollisionsTankInimigo(this.tankInimigo, this.bbTankInimigo);
-    } else {
-      if (Array.isArray(this.tankInimigo)) {
-        // Se houver vários inimigos, veridicar colisão para cada um
-        this.tankInimigo.forEach((tank, idx) => {
-          const bb = this.bbTankInimigo[idx];
-          this.checkCollisionsTankInimigo(tank, bb);
-        });
+
+    // Verificar se há tanques inimigos antes de verificar colisões
+    if (this.tankInimigo && this.bbTankInimigo) {
+      if (this.index === 0) {
+        this.checkCollisionsTankInimigo(this.tankInimigo, this.bbTankInimigo);
+      } else {
+        if (Array.isArray(this.tankInimigo)) {
+          // Verificar colisão para cada tanque inimigo
+          this.tankInimigo.forEach((tank, idx) => {
+            const bb = this.bbTankInimigo[idx];
+            if (bb) {
+              this.checkCollisionsTankInimigo(tank, bb);
+            }
+          });
+        } else {
+          this.checkCollisionsTankInimigo(this.tankInimigo, this.bbTankInimigo);
+        }
       }
     }
   }
   checkCollisionsTankInimigo(tankInimigo, bbTankInimigo) {
-    if (bbTankInimigo.intersectsBox(this.bbBall)) {
+    if (bbTankInimigo && bbTankInimigo.intersectsBox(this.bbBall)) {
       if (!this.ballHasBeenHit) {
         if (!tankInimigo.godMode) {
-          if (this.tankUsuario && this.tankUsuario.danoTiro == 2) {
-            tankInimigo.vida = tankInimigo.vida - 2;
+          if (this.tankUsuario && this.tankUsuario.danoTiro === 2) {
+            tankInimigo.vida -= 2;
             playDamageSound(true);
           } else {
-            tankInimigo.vida = tankInimigo.vida - 1;
+            tankInimigo.vida -= 1;
             playDamageSound(this.tankUsuario != null);
           }
-          this.ballHasBeenHit = true; // Variável de controle para deixar cada instancia de uma bola contabilizar somente um tiro no tanque inimigo
+          this.ballHasBeenHit = true;
         }
       }
       this.destroy();
@@ -79,24 +87,46 @@ export class Ball {
       if (bbWall.intersectsBox(this.bbBall)) {
         this.collisionCount += 1; // Incrementa o contador de colisões
         if (this.collisionCount >= 3) {
-          this.destroy(); // Remova a bola se ela colidiu duas vezes
+          this.destroy(); // Remove a bola se ela colidiu três vezes
           break;
         }
         this.object.position.copy(this.object.previousPosition);
-        if (bbWall.normal) {
-          this.changeDirection(bbWall.normal);
+        const normals = bbWall.normals;
+        if (normals && normals.length > 0) {
+          let bestNormal = null;
+          let minDot = Infinity;
+          for (let j = 0; j < normals.length; j++) {
+            const normal = normals[j];
+            if (normal) {
+              const dot = this.direction.dot(normal);
+              console.log(`Normal ${j}:`, normal, "Dot:", dot);
+              if (dot < minDot) {
+                minDot = dot;
+                bestNormal = normal;
+              }
+            } else {
+              console.error("Normal da parede não definida em checkCollisions");
+            }
+          }
+          if (bestNormal) {
+            this.changeDirection(bestNormal);
+          } else {
+            console.warn("Nenhuma normal adequada encontrada em checkCollisions, usando normal padrão");
+            bestNormal = normals[0]; // Usa a primeira normal disponível
+            this.changeDirection(bestNormal);
+          }
         } else {
-          console.error("Normal da parede não definida");
+          console.error("Normais da parede não definidas em checkCollisions");
+          this.destroy(); // Opcional: destruir a bola se as normais não estiverem definidas
         }
         this.bbBall.setFromObject(this.object);
         break; // Pare de verificar outras paredes uma vez que a colisão foi encontrada
       }
     }
   }
-
   changeDirection(normal) {
     if (!normal) {
-      console.error("Normal não é definida.");
+      console.error("Normal não é definida em changeDirection.");
       return;
     }
     this.direction.reflect(normal).normalize();
@@ -109,7 +139,7 @@ export class Ball {
       new THREE.SphereGeometry(0.3, 32, 32),
       new THREE.MeshPhongMaterial({
         color: "white",
-        shininess: 200, // Note que 'shininess' deve ser um número, não uma string
+        shininess: 200,
         emissive: new THREE.Color("white"), // Defina a cor emissiva aqui
       })
     );

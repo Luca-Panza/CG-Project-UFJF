@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import { initRenderer, initCamera, initDefaultBasicLight, setDefaultMaterial, createGroundPlaneXZ } from "../libs/util/util.js";
+import { initRenderer, initCamera, setDefaultMaterial, createGroundPlaneXZ } from "../libs/util/util.js";
 import { SecondaryBoxTopEsquerda } from "./util/util.js";
 import { createLevel } from "./components/createLevel.js";
 import { keyboardUpdateTank1 } from "./controls/keyBoardControl.js";
@@ -12,7 +12,7 @@ import { levels, scene, walls, bbWalls, bbMovingWalls, movingWalls } from "./con
 import { TankImport } from "./components/importTank.js";
 import { createLampposts } from "./components/importLamp.js";
 import { createLightsForLevel0, createLightsForLevel1, createLightsForLevel2 } from "./components/createLight.js";
-import { ProgressBar } from "./components/barraDeVida.js";
+import { ProgressBar } from "./components/createLifeBar.js";
 import { enemyTankBehavior } from "./controls/tankInimigoControl.js";
 import { CSG } from "../libs/other/CSGMesh.js";
 import { shootCannon } from "./controls/tiroCanhao.js";
@@ -290,24 +290,27 @@ function createRotatingCannon() {
   return cannonGroup;
 }
 
-function comportamentoCannon(canhao, tanks, targetBoundingBox, index) {
+function comportamentoCannon(canhao, tanks, targetBoundingBoxes, index) {
   const closestTank = findClosestTank(canhao, tanks);
   if (closestTank) {
+    const closestIndex = tanks.indexOf(closestTank);
+    const closestBoundingBox = targetBoundingBoxes[closestIndex];
+
     const targetPosition = closestTank.object.position;
     const cannonPosition = canhao.position.clone();
 
-    // Calcular a direção para o tanque mais próximo
+    // Calcular a direção para o tanque mais próximo (se necessário)
     const direction = new THREE.Vector3().subVectors(targetPosition, cannonPosition).normalize();
 
-    // Atualizar a rotação do canhão lentamente em direção ao tanque mais próximo
-    const targetRotationZ = Math.atan2(direction.z, direction.x); // Cálculo da rotação desejada no eixo Z
-    const rotationSpeed = 0.01; // Ajuste a velocidade da rotação
+    // Smoothly rotate the cannon towards the closest tank
+    const targetRotationZ = Math.atan2(direction.z, direction.x);
+    const rotationSpeed = 0.01;
 
-    // Rotação suave em direção ao tanque
+    // Smooth rotation towards the tank
     canhao.rotation.z += THREE.MathUtils.clamp(targetRotationZ - canhao.rotation.z, -rotationSpeed, rotationSpeed);
 
-    // Disparar se a cadência de tiro permitir
-    shootCannon(canhao, closestTank.object, targetBoundingBox, index);
+    // Shoot if the fire rate allows, using the closestBoundingBox
+    shootCannon(canhao, closestTank, closestBoundingBox, index);
   }
 }
 
